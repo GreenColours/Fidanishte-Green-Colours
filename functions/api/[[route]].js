@@ -68,6 +68,9 @@ export async function onRequest({ request, env, params }) {
     });
   };
 
+  // Clean ID — strip 'eq.' prefix if present (admin sends ?id=eq.5)
+  const cleanId = (raw) => raw ? String(raw).replace(/^eq\./, '') : null;
+
   // Response helpers
   const ok  = (data, status = 200) => new Response(
     JSON.stringify(data),
@@ -121,7 +124,7 @@ export async function onRequest({ request, env, params }) {
       }
 
       if (method === 'PUT') {
-        const id = url.searchParams.get('id') || url.searchParams.get('id_eq');
+        const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
         if (!id) return err('ID mungon');
         const body = sanitize(await request.json());
         const res  = await sb(`flowers?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(body) });
@@ -130,7 +133,7 @@ export async function onRequest({ request, env, params }) {
       }
 
       if (method === 'DELETE') {
-        const id = url.searchParams.get('id') || url.searchParams.get('id_eq');
+        const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
         if (!id) return err('ID mungon');
         await sb(`flowers?id=eq.${id}`, { method: 'DELETE' });
         return ok({ deleted: true });
@@ -159,7 +162,7 @@ export async function onRequest({ request, env, params }) {
       }
 
       if (method === 'PUT') {
-        const id = url.searchParams.get('id') || url.searchParams.get('id_eq');
+        const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
         if (!id) return err('ID mungon');
         const body = sanitize(await request.json());
         const res  = await sb(`blog?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(body) });
@@ -168,7 +171,7 @@ export async function onRequest({ request, env, params }) {
       }
 
       if (method === 'DELETE') {
-        const id = url.searchParams.get('id') || url.searchParams.get('id_eq');
+        const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
         if (!id) return err('ID mungon');
         await sb(`blog?id=eq.${id}`, { method: 'DELETE' });
         return ok({ deleted: true });
@@ -197,7 +200,7 @@ export async function onRequest({ request, env, params }) {
       }
 
       if (method === 'PUT') {
-        const id = url.searchParams.get('id') || url.searchParams.get('id_eq');
+        const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
         if (!id) return err('ID mungon');
         const body = sanitize(await request.json());
         const res  = await sb(`categories?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(body) });
@@ -206,7 +209,7 @@ export async function onRequest({ request, env, params }) {
       }
 
       if (method === 'DELETE') {
-        const id = url.searchParams.get('id') || url.searchParams.get('id_eq');
+        const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
         if (!id) return err('ID mungon');
         await sb(`categories?id=eq.${id}`, { method: 'DELETE' });
         return ok({ deleted: true });
@@ -235,7 +238,7 @@ export async function onRequest({ request, env, params }) {
       }
 
       if (method === 'DELETE') {
-        const id = url.searchParams.get('id') || url.searchParams.get('id_eq');
+        const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
         if (!id) return err('ID mungon');
         await sb(`occasions?id=eq.${id}`, { method: 'DELETE' });
         return ok({ deleted: true });

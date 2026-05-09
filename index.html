@@ -1766,15 +1766,16 @@ async function fetchData(){
     /* Normalizo fushat për index.html */
     PRODUCTS = PRODUCTS.map(p => ({
       ...p,
-      group:        (p.category || '').toLowerCase().replace(/\s+/g,'-'),
-      imageUrl:     p.img_url || '',
-      discountPrice:p.discount_price || null,
+      group:        (p.category || '').toLowerCase().replace(/[^a-z0-9]+/g,'-'),
+      imageUrl:     p.img_url || p.imageUrl || '',
+      discountPrice:p.discount_price ?? p.discountPrice ?? null,
       available:    p.available !== false,
+      care:         p.care_advice || p.care || {},
     }));
 
     CATEGORIES = CATEGORIES.map(c => ({
       ...c,
-      img: c.img_url || 'https://images.unsplash.com/photo-1487530811015-780780fb0264?w=600&q=75'
+      img: c.img_url || '',
     }));
 
   } catch(e) {
@@ -1934,10 +1935,13 @@ async function loadCatalog(){
 function renderCategoryCards(){
   const grid = $('catGrid');
   grid.innerHTML = CATEGORIES.slice(0,6).map((g,i)=>{
-    const count = PRODUCTS.filter(p=>p.group===g.id).length;
+    const count = PRODUCTS.filter(p=>(p.category||'')===(g.name||'')).length;
     return `
-      <div class="cat-card reveal" onclick="setGroupFilter('${esc(g.id)}')">
-        <img src="${g.img}" alt="${esc(g.name)}" loading="lazy">
+      <div class="cat-card reveal" onclick="setGroupFilter('${esc(g.name)}')">
+        ${g.img
+          ? `<img src="${g.img}" alt="${esc(g.name)}" loading="lazy">`
+          : `<div style="width:100%;height:100%;background:var(--forest);display:flex;align-items:center;justify-content:center;font-size:3rem;">${g.emoji||'🌸'}</div>`
+        }
         <div class="cat-card-overlay"></div>
         <div class="cat-card-body">
           <div class="cat-card-name">${esc(g.name)}</div>
@@ -1962,7 +1966,7 @@ function renderFilterPills(){
   const wrap = $('filterPills');
   const pills = [
     `<button class="pill active" data-filter="all" onclick="setGroupFilter('all')">Të gjitha</button>`,
-    ...CATEGORIES.map(g=>`<button class="pill" data-filter="${esc(g.id)}" onclick="setGroupFilter('${esc(g.id)}')">${esc(g.name)}</button>`)
+    ...CATEGORIES.map(g=>`<button class="pill" data-filter="${esc(g.name)}" onclick="setGroupFilter('${esc(g.name)}')">${esc(g.emoji||'')} ${esc(g.name)}</button>`)
   ];
   wrap.innerHTML = pills.join('');
 }
@@ -1971,7 +1975,11 @@ $('searchInput').addEventListener('input', e=>{ _searchQ=e.target.value.toLowerC
 
 function applyFilters(){
   let list = PRODUCTS;
-  if(_activeGroup!=='all') list=list.filter(p=>p.group===_activeGroup);
+  if(_activeGroup!=='all') list=list.filter(p=>{
+    const pg = (p.category||'').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+    const ag = _activeGroup.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+    return pg === ag || p.category === _activeGroup;
+  });
   if(_searchQ) list=list.filter(p=>(p.name||'').toLowerCase().includes(_searchQ)||(p.description||'').toLowerCase().includes(_searchQ));
   _filteredProducts = list;
   _page = 0;
@@ -2035,7 +2043,7 @@ function openQV(id){
   _qvId = id;
   const dp = p.discountPrice;
   const price = Number(p.price||0);
-  const care = p.care || {};
+  const care = (typeof p.care_advice === 'string' ? JSON.parse(p.care_advice||'{}') : p.care) || p.care || {};
 
   $('qvImg').src = p.imageUrl || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=80';
   $('qvImg').alt = p.name||'';

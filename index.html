@@ -1332,7 +1332,8 @@
       }
       .gm-large, .gm-tall { grid-column: auto; grid-row: auto; }
     }
-  </style>
+  @keyframes sk{from{opacity:.5}to{opacity:1}}
+</style>
 </head>
 <body>
 
@@ -1747,24 +1748,39 @@
 <!-- ══════════════ JS ══════════════ -->
 <script>
 /* ── Data ── */
-const CATEGORIES = [
-  { id: 'lule',   name: 'Lule Natyrale',  img: 'https://images.unsplash.com/photo-1487530811015-780780fb0264?w=600&q=75' },
-  { id: 'bime',   name: 'Bimë Dekorale',  img: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=75' },
-  { id: 'fidan',  name: 'Fidanë Frutorë', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=75' },
-  { id: 'ullinj', name: 'Ullinj & Palma', img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&q=75' },
-  { id: 'kaktus', name: 'Kaktuse',        img: 'https://images.unsplash.com/photo-1461009683693-342af2f2d6ce?w=600&q=75' },
-  { id: 'pemë',   name: 'Pemë Dekorative',img: 'https://images.unsplash.com/photo-1502977249166-824b3a8a4d6d?w=600&q=75' },
-];
+/* ── Data (nga API) ── */
+let CATEGORIES = [];
+let PRODUCTS   = [];
 
-const PRODUCTS = [
-  { id: 1, name: 'Rosa e Kuqe', category: 'Lule', group: 'lule', price: 350, badge: 'E re', imageUrl: 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400&q=70', available: true },
-  { id: 2, name: 'Monstera Deliciosa', category: 'Bimë Dekorative', group: 'bime', price: 1200, discountPrice: 800, badge: 'Ulje', imageUrl: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=400&q=70', available: true },
-  { id: 3, name: 'Limon Sicilje', category: 'Fidanë Frutorë', group: 'fidan', price: 650, imageUrl: 'https://images.unsplash.com/photo-1590502593747-42a996133562?w=400&q=70', available: true },
-  { id: 5, name: 'Tulipan Holandez', category: 'Lule Natyrale', group: 'lule', price: 280, imageUrl: 'https://images.unsplash.com/photo-1490750967868-88df5691166b?w=400&q=70', available: true },
-  { id: 6, name: 'Kaktus Saguaro', category: 'Kaktuse', group: 'kaktus', price: 450, imageUrl: 'https://images.unsplash.com/photo-1509423350716-97f9360b4e09?w=400&q=70', available: false },
-  { id: 7, name: 'Fidanë Ulliri', category: 'Ullinj & Palma', group: 'ullinj', price: 1800, imageUrl: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=70', available: true },
-  { id: 8, name: 'Orchideja e Bardhë', category: 'Lule Natyrale', group: 'lule', price: 900, badge: 'Premium', imageUrl: 'https://images.unsplash.com/photo-1490750967868-88df5691166b?w=400&q=70', available: true },
-];
+const WORKER_URL = ''; /* bosh — përdor rrugë relative /api */
+
+async function fetchData(){
+  try {
+    const [catRes, prodRes] = await Promise.all([
+      fetch('/api/categories'),
+      fetch('/api/flowers')
+    ]);
+    if(catRes.ok)  CATEGORIES = await catRes.json();
+    if(prodRes.ok) PRODUCTS   = await prodRes.json();
+
+    /* Normalizo fushat për index.html */
+    PRODUCTS = PRODUCTS.map(p => ({
+      ...p,
+      group:        (p.category || '').toLowerCase().replace(/\s+/g,'-'),
+      imageUrl:     p.img_url || '',
+      discountPrice:p.discount_price || null,
+      available:    p.available !== false,
+    }));
+
+    CATEGORIES = CATEGORIES.map(c => ({
+      ...c,
+      img: c.img_url || 'https://images.unsplash.com/photo-1487530811015-780780fb0264?w=600&q=75'
+    }));
+
+  } catch(e) {
+    console.warn('API fetch gabim:', e);
+  }
+}
 
 const BLOG_POSTS = [
   { id: 1, title: 'Si të kujdeseni për Monsterat tuaj', category: 'Kujdesi i Bimëve', excerpt: 'Monstera Deliciosa është një nga bimët më të dashura dekorative. Ja si të siguroni rritjen e saj optimale...', date: '2026-04-15', readTime: '4 min', imageUrl: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=600&q=75' },
@@ -1893,7 +1909,20 @@ const PAGE_SIZE = 12;
 let _activeGroup = 'all';
 let _searchQ = '';
 
-function loadCatalog(){
+async function loadCatalog(){
+  /* Shfaq skeleton loader */
+  $('productGrid').innerHTML = Array(8).fill(0).map(()=>`
+    <div style="background:#fff;border-radius:3px;overflow:hidden;border:1px solid rgba(58,107,70,.08);">
+      <div style="height:220px;background:rgba(58,107,70,.06);animation:sk .8s ease-in-out alternate infinite;"></div>
+      <div style="padding:1rem;">
+        <div style="height:12px;background:rgba(58,107,70,.06);border-radius:2px;margin-bottom:.5rem;animation:sk .8s ease-in-out alternate infinite;"></div>
+        <div style="height:12px;width:60%;background:rgba(58,107,70,.06);border-radius:2px;animation:sk .8s ease-in-out alternate infinite;"></div>
+      </div>
+    </div>`).join('');
+
+  /* Ngarko të dhënat */
+  await fetchData();
+
   renderCategoryCards();
   renderFilterPills();
   applyFilters();
@@ -2039,8 +2068,24 @@ function openQV(id){
 }
 
 /* ── Blog ── */
-function loadBlog(){
+async function loadBlog(){
+  try {
+    const res  = await fetch('/api/blog');
+    if(res.ok) {
+      const data = await res.json();
+      BLOG_POSTS = data.map(p => ({
+        ...p,
+        imageUrl: p.img_url || '',
+        excerpt:  p.content ? p.content.substring(0,120)+'...' : '',
+      }));
+    }
+  } catch(e) { console.warn('Blog fetch gabim:', e); }
+
   const grid = $('blogGrid');
+  if(!BLOG_POSTS.length){
+    grid.innerHTML = '<p style="text-align:center;padding:2rem;color:rgba(13,31,20,.4);">Nuk ka artikuj aktualisht.</p>';
+    return;
+  }
   grid.innerHTML = BLOG_POSTS.slice(0,3).map(p=>{
     const img = p.imageUrl||p.img||p.image||'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=75';
     const exc = (p.excerpt||p.content||'').substring(0,110);
@@ -2055,11 +2100,29 @@ function loadBlog(){
         </div>
       </a>`;
   }).join('');
+
 }
 
 /* ── Init ── */
-loadCatalog();
-loadBlog();
+/* Ngarko settings (hero_img, about_img) */
+async function loadSettings(){
+  try {
+    const res  = await fetch('/api/settings');
+    const data = await res.json();
+    if(!Array.isArray(data)) return;
+    const get  = key => (data.find(s=>s.key===key)||{}).value || '';
+    const heroImg  = get('hero_img');
+    const aboutImg = get('about_img');
+    if(heroImg)  { const el = document.querySelector('.hero-main-img, #heroImg, .hero-img'); if(el) el.src = heroImg; }
+    if(aboutImg) { const el = document.querySelector('.about-img, #aboutImg'); if(el) el.src = aboutImg; }
+  } catch(e) {}
+}
+
+(async () => {
+  await loadCatalog();
+  await loadSettings();
+  await loadBlog();
+})();
 
 </script>
 

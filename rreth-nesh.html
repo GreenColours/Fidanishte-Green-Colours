@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rreth Nesh — Green & Colours · Fidanishte Premium</title>
+  <meta name="description" content="Historia e Fidanishte Green & Colours — pasion për natyrën, standarde europiane dhe shërbim i sinqertë që nga viti 2019." />
+  <meta name="robots" content="index, follow" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌿%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink:      #0d1f14;
+      --forest:   #1a3520;
+      --pine:     #234b2c;
+      --moss:     #3a6b46;
+      --sage:     #7aab84;
+      --mist:     #c8dece;
+      --cream:    #f8f4ec;
+      --parchment:#f0e9d6;
+      --gold:     #c4963a;
+      --gold-lt:  #e0b85a;
+      --blush:    #deb8a0;
+      --white:    #ffffff;
+      --serif:    'Playfair Display', serif;
+      --sans:     'Outfit', sans-serif;
+      --ease:     cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--cream); color: var(--ink); overflow-x: hidden; }
+    img  { display: block; max-width: 100%; }
+    a    { text-decoration: none; color: inherit; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--cream); }
+    ::-webkit-scrollbar-thumb { background: var(--moss); border-radius: 2px; }
+
+    /* ── NAV ── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(1.5rem,5vw,4rem);
+      background: rgba(13,31,20,0);
+      transition: background .4s var(--ease), border-color .4s;
+      border-bottom: 1px solid transparent;
+    }
+    #nav.stuck {
+      background: rgba(13,31,20,.97);
+      border-bottom-color: rgba(196,150,58,.18);
+      backdrop-filter: blur(20px);
+    }
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.15rem; font-weight: 500;
+      color: var(--white);
+      display: flex; align-items: center; gap: .4rem;
+    }
+    .nav-logo-dot { width:6px;height:6px;border-radius:50%;background:var(--gold);display:inline-block; }
+    .nav-links { display:flex;align-items:center;gap:2.5rem;list-style:none; }
+    .nav-links a {
+      font-size:.72rem; font-weight:500;
+      letter-spacing:.16em; text-transform:uppercase;
+      color:rgba(255,255,255,.75); transition:color .2s;
+    }
+    .nav-links a:hover { color:var(--white); }
+    .nav-links a.active { color:var(--gold-lt); }
+    .nav-wa {
+      display:flex;align-items:center;gap:.5rem;
+      padding:.55rem 1.3rem;
+      background:rgba(196,150,58,.15);
+      border:1px solid rgba(196,150,58,.45);
+      color:var(--white) !important;
+      border-radius:2px; font-size:.7rem !important;
+      font-weight:600 !important; letter-spacing:.12em !important;
+      transition:background .25s;
+    }
+    .nav-wa:hover { background:var(--gold) !important; color:var(--ink) !important; }
+    .nav-burger { display:none; flex-direction:column; gap:5px; padding:.4rem; cursor:pointer; }
+    .nav-burger span { display:block;width:22px;height:1.5px;background:rgba(255,255,255,.85);transition:all .3s; }
+
+    #mobileMenu {
+      position:fixed;inset:0;z-index:300;
+      background:var(--ink);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;
+      transform:translateX(100%);transition:transform .38s var(--ease);
+    }
+    #mobileMenu.open { transform:translateX(0); }
+    #mobileMenu a { font-family:var(--serif);font-size:2.2rem;font-weight:400;color:rgba(255,255,255,.85);transition:color .2s; }
+    #mobileMenu a:hover { color:var(--gold-lt); }
+    #mobileMenu a.active { color:var(--gold-lt); }
+    .mm-close { position:absolute;top:1.5rem;right:1.5rem;color:rgba(255,255,255,.5);font-size:1.3rem;background:none;border:none;cursor:pointer; }
+
+    /* ── HERO ── */
+    .rn-hero {
+      position: relative;
+      height: 48vh; min-height: 340px;
+      display: flex; align-items: center;
+      overflow: hidden;
+    }
+    .rn-hero-bg {
+      position: absolute; inset: 0;
+      background: url('https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=1800&q=85') center 60% / cover no-repeat;
+    }
+    .rn-hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top,
+        rgba(13,31,20,.92) 0%,
+        rgba(26,53,32,.65) 45%,
+        rgba(58,107,70,.25) 100%);
+    }
+    .rn-hero-inner {
+      position: relative; z-index: 2;
+      padding: 80px clamp(1.5rem,5vw,4rem) 0;
+      width: 100%; text-align: center;
+    }
+    .breadcrumb {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .68rem; letter-spacing: .14em; text-transform: uppercase;
+      color: rgba(255,255,255,.4); margin-bottom: 1.4rem;
+    }
+    .breadcrumb a { color: rgba(255,255,255,.4); transition: color .2s; }
+    .breadcrumb a:hover { color: var(--gold-lt); }
+    .breadcrumb-sep { opacity: .3; }
+    .breadcrumb-cur { color: var(--gold-lt); }
+    .rn-hero-title {
+      font-family: var(--serif);
+      font-size: clamp(2.8rem,6vw,5rem);
+      font-weight: 400; line-height: 1.05;
+      color: var(--white); margin-bottom: 1.2rem;
+    }
+    .rn-hero-title em { font-style: italic; color: var(--blush); }
+    .rn-hero-sub {
+      font-size: 1rem; font-weight: 300;
+      color: rgba(255,255,255,.58);
+      max-width: 520px; line-height: 1.8;
+    }
+
+    /* ── SHARED ── */
+    .sec-tag {
+      display: block; font-size: .65rem; font-weight: 600;
+      letter-spacing: .22em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: .6rem;
+    }
+    .sec-title {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem,3.5vw,2.8rem);
+      font-weight: 400; line-height: 1.15;
+      color: var(--forest);
+    }
+    .sec-title em { font-style: italic; color: var(--moss); }
+    .divider { width:44px;height:1px;background:var(--gold);margin:1.4rem 0; }
+
+    .reveal { opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease); }
+    .reveal.in { opacity:1;transform:translateY(0); }
+
+    .btn-gold {
+      display:inline-flex;align-items:center;gap:.5rem;
+      padding:.85rem 2rem;background:var(--gold);color:var(--ink);
+      font-size:.74rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+      border-radius:2px;transition:background .22s,transform .15s;
+    }
+    .btn-gold:hover { background:var(--gold-lt);transform:translateY(-2px); }
+    .btn-ghost-dark {
+      display:inline-flex;align-items:center;gap:.5rem;
+      padding:.85rem 2rem;border:1px solid rgba(58,107,70,.25);
+      color:var(--forest);font-size:.74rem;font-weight:400;
+      letter-spacing:.14em;text-transform:uppercase;border-radius:2px;
+      transition:all .22s;
+    }
+    .btn-ghost-dark:hover { background:var(--forest);color:var(--cream); }
+
+    /* ── INTRO STRIP ── */
+    .intro-strip {
+      background: var(--forest);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .is-item {
+      padding: 2.5rem 2rem;
+      border-right: 1px solid rgba(255,255,255,.06);
+      text-align: center;
+    }
+    .is-item:last-child { border-right: none; }
+    .is-num {
+      font-family: var(--serif);
+      font-size: 2.4rem; font-weight: 400;
+      color: var(--gold-lt); line-height: 1;
+      margin-bottom: .4rem;
+    }
+    .is-label {
+      font-size: .68rem; letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.4);
+    }
+
+    /* ── STORY ── */
+    .story {
+      padding: clamp(4rem,8vw,7rem) clamp(1.5rem,5vw,4rem);
+      background: var(--cream);
+    }
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem,6vw,6rem);
+      align-items: center;
+      margin-top: 3rem;
+    }
+    .story-img-wrap { position: relative; }
+    .story-img {
+      width: 100%; aspect-ratio: 4/3;
+      object-fit: cover; border-radius: 3px;
+      display: block;
+    }
+    .story-img-accent {
+      position: absolute;
+      top: -14px; right: -14px;
+      width: 55%; height: 55%;
+      border-top: 1px solid rgba(196,150,58,.3);
+      border-right: 1px solid rgba(196,150,58,.3);
+      border-radius: 0 3px 0 0;
+      pointer-events: none;
+    }
+    .story-img-accent2 {
+      position: absolute;
+      bottom: -14px; left: -14px;
+      width: 55%; height: 55%;
+      border-bottom: 1px solid rgba(196,150,58,.3);
+      border-left: 1px solid rgba(196,150,58,.3);
+      border-radius: 0 0 0 3px;
+      pointer-events: none;
+    }
+    .story-text p {
+      font-size: .96rem; font-weight: 300;
+      line-height: 1.9; color: rgba(13,31,20,.65);
+      margin-bottom: 1rem;
+    }
+
+    /* ── VALUES ── */
+    .values {
+      background: var(--parchment);
+      padding: clamp(4rem,8vw,7rem) clamp(1.5rem,5vw,4rem);
+    }
+    .values-head { text-align:center; margin-bottom:3rem; }
+    .values-head .divider { margin:1.4rem auto; }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+    }
+    .val-card {
+      background: var(--white);
+      border: 1px solid rgba(58,107,70,.1);
+      border-radius: 3px;
+      padding: 2rem 1.8rem;
+      transition: transform .3s var(--ease), box-shadow .3s;
+    }
+    .val-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px rgba(13,31,20,.09);
+    }
+    .val-icon {
+      width: 48px; height: 48px;
+      border-radius: 3px;
+      background: rgba(58,107,70,.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: var(--moss);
+      margin-bottom: 1.2rem;
+    }
+    .val-name {
+      font-family: var(--serif);
+      font-size: 1.2rem; font-weight: 500;
+      color: var(--forest); margin-bottom: .6rem;
+    }
+    .val-desc {
+      font-size: .86rem; font-weight: 300;
+      line-height: 1.8; color: rgba(13,31,20,.55);
+    }
+
+    /* ── TEAM ── */
+    .team {
+      background: var(--forest);
+      padding: clamp(4rem,8vw,7rem) clamp(1.5rem,5vw,4rem);
+    }
+    .team .sec-tag { color: var(--blush); }
+    .team .sec-title { color: var(--white); }
+    .team .sec-title em { color: var(--blush); }
+    .team .divider { background: rgba(222,184,160,.4); }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.4rem;
+      margin-top: 3rem;
+    }
+    .team-card {
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 3px; overflow: hidden;
+      transition: border-color .3s;
+    }
+    .team-card:hover { border-color: rgba(196,150,58,.25); }
+    .team-card img {
+      width: 100%; aspect-ratio: 3/4;
+      object-fit: cover; object-position: top;
+      display: block;
+      filter: grayscale(20%);
+      transition: filter .4s;
+    }
+    .team-card:hover img { filter: grayscale(0%); }
+    .team-body {
+      padding: 1.3rem 1.4rem;
+      background: rgba(255,255,255,.04);
+    }
+    .team-name {
+      font-family: var(--serif);
+      font-size: 1.1rem; color: var(--white); margin-bottom: .2rem;
+    }
+    .team-role {
+      font-size: .7rem; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--gold);
+    }
+    .team-desc {
+      font-size: .82rem; font-weight: 300;
+      color: rgba(255,255,255,.45); line-height: 1.7;
+      margin-top: .6rem;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline {
+      padding: clamp(4rem,8vw,7rem) clamp(1.5rem,5vw,4rem);
+      background: var(--cream);
+    }
+    .timeline-head { margin-bottom: 3.5rem; }
+
+    .tl-items { position: relative; }
+    .tl-items::before {
+      content: '';
+      position: absolute; left: 80px; top: 0; bottom: 0;
+      width: 1px; background: rgba(196,150,58,.2);
+    }
+    .tl-item {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 2rem;
+      margin-bottom: 2.8rem;
+      position: relative;
+    }
+    .tl-item:last-child { margin-bottom: 0; }
+    .tl-year {
+      font-family: var(--serif);
+      font-size: 1.05rem; font-weight: 500;
+      color: var(--gold); text-align: right;
+      padding-top: .1rem;
+      position: relative;
+    }
+    .tl-year::after {
+      content: '';
+      position: absolute; right: -2.55rem; top: .45rem;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: 2px solid var(--cream);
+    }
+    .tl-content {}
+    .tl-title {
+      font-family: var(--serif);
+      font-size: 1.2rem; font-weight: 500;
+      color: var(--forest); margin-bottom: .4rem;
+    }
+    .tl-desc {
+      font-size: .88rem; font-weight: 300;
+      color: rgba(13,31,20,.55); line-height: 1.8;
+    }
+
+    /* ── CTA STRIP ── */
+    .cta-strip {
+      background: var(--gold);
+      padding: 4rem clamp(1.5rem,5vw,4rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem; flex-wrap: wrap;
+    }
+    .cta-text h3 {
+      font-family: var(--serif);
+      font-size: clamp(1.5rem,3vw,2.2rem);
+      font-weight: 400; color: var(--ink);
+      line-height: 1.2;
+    }
+    .cta-text p {
+      font-size: .9rem; color: rgba(13,31,20,.65);
+      margin-top: .4rem;
+    }
+    .btn-ink {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .9rem 2.2rem;
+      background: var(--ink); color: var(--cream);
+      font-size: .76rem; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase;
+      border-radius: 2px; transition: background .22s, transform .15s;
+      white-space: nowrap;
+    }
+    .btn-ink:hover { background: var(--forest); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: rgba(5,14,8,.98);
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding: 2.5rem clamp(1.5rem,5vw,4rem);
+    }
+    .footer-inner {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap; gap: 1.5rem;
+    }
+    .footer-logo { font-family: var(--serif); font-size: 1.2rem; color: rgba(255,255,255,.7); }
+    .footer-logo em { color: var(--gold-lt); font-style: italic; }
+    .footer-links { display:flex;gap:2rem;flex-wrap:wrap; }
+    .footer-links a { font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);transition:color .2s; }
+    .footer-links a:hover { color:rgba(255,255,255,.7); }
+    .footer-copy { font-size:.72rem; color:rgba(255,255,255,.2); }
+
+    /* ── FAB ── */
+    .fab-wa {
+      position:fixed;bottom:1.6rem;right:1.6rem;z-index:90;
+      width:52px;height:52px;border-radius:50%;
+      background:#25D366;color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.35rem;
+      box-shadow:0 6px 24px rgba(37,211,102,.35);
+      transition:transform .25s var(--ease);
+    }
+    .fab-wa:hover { transform:scale(1.1); }
+
+    @media (max-width:900px) {
+      .story-grid { grid-template-columns:1fr; }
+      .intro-strip { grid-template-columns:1fr 1fr; }
+      .tl-items::before { left:60px; }
+      .tl-item { grid-template-columns:60px 1fr; }
+    }
+    @media (max-width:768px) {
+      .nav-links { display:none; }
+      .nav-burger { display:flex; }
+      .intro-strip { grid-template-columns:1fr 1fr; }
+      .cta-strip { flex-direction:column; text-align:center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nav-logo">
+    Green & Colours
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Kryefaqja</a></li>
+    <li><a href="index.html#produktet">Produktet</a></li>
+    <li><a href="rreth-nesh.html" class="active">Rreth Nesh</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="index.html#kontakt">Kontakt</a></li>
+    <li><a href="https://wa.me/355686648467" target="_blank" rel="noopener" class="nav-wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></li>
+  </ul>
+  <div class="nav-burger" id="burger"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu">
+  <button class="mm-close" id="mmClose"><i class="fa-solid fa-xmark"></i></button>
+  <a href="index.html" onclick="closeMM()">Kryefaqja</a>
+  <a href="index.html#produktet" onclick="closeMM()">Produktet</a>
+  <a href="rreth-nesh.html" class="active" onclick="closeMM()">Rreth Nesh</a>
+  <a href="blog.html" onclick="closeMM()">Blog</a>
+  <a href="index.html#kontakt" onclick="closeMM()">Kontakt</a>
+  <a href="https://wa.me/355686648467" target="_blank" style="color:var(--gold-lt);">
+    <i class="fa-brands fa-whatsapp"></i> WhatsApp
+  </a>
+</div>
+
+<!-- HERO -->
+<section class="rn-hero">
+  <div class="rn-hero-bg"></div>
+  <div class="rn-hero-overlay"></div>
+  <div class="rn-hero-inner">
+    <h1 class="rn-hero-title">
+      Historia jonë &<br><em>filozofia e natyrës</em>
+    </h1>
+    <p class="rn-hero-sub">
+      Themeluar me dashuri në vitin 2019 — me synimin për të sjellë cilësi, ngjyra dhe jetë në çdo ambient.
+    </p>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="intro-strip">
+  <div class="is-item">
+    <div class="is-num">2019</div>
+    <div class="is-label">Themeluar</div>
+  </div>
+  <div class="is-item">
+    <div class="is-num">100+</div>
+    <div class="is-label">Klientë të lumtur</div>
+  </div>
+  <div class="is-item">
+    <div class="is-num">7/7</div>
+    <div class="is-label">Ditë disponibël</div>
+  </div>
+  <div class="is-item">
+    <div class="is-num">24h</div>
+    <div class="is-label">Dërgesë</div>
+  </div>
+</div>
+
+<!-- STORY -->
+<section class="story">
+  <div class="reveal">
+    <span class="sec-tag">Historia jonë</span>
+    <h2 class="sec-title">Nga pasioni tek <em>profesionalizmi</em></h2>
+  </div>
+  <div class="story-grid">
+    <div class="story-img-wrap reveal">
+      <img class="story-img"
+           src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=900&q=85"
+           alt="Fidanishtja jonë" loading="lazy">
+      <div class="story-img-accent"></div>
+      <div class="story-img-accent2"></div>
+    </div>
+    <div class="story-text reveal">
+      <div class="divider"></div>
+      <p>Gjithçka filloi me një dashuri të thellë për natyrën dhe besimin se bimët e gjelbra, lulet e freskëta dhe kopshtet e kujdesur kanë fuqinë të ndryshojnë ndjenjën e një hapësire — dhe të një dite.</p>
+      <p>Fidanishte Green & Colours u themelua në Durrës në vitin 2019 me një synim të qartë: të ofrojmë produkte me standarde europiane, të zgjedhura me kujdes, dhe të shoqëruara me këshillim të vërtetë — jo vetëm shitje.</p>
+      <p>Sot shërbejmë familje, hotele, restorante dhe zyra në të gjithë rajonin. Çdo dorëzim bëhet me kujdes dhe çdo klient trajtohet si i veçantë.</p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.8rem;">
+        <a href="index.html#produktet" class="btn-gold"><i class="fa-solid fa-seedling"></i> Shiko produktet</a>
+        <a href="https://wa.me/355686648467" target="_blank" rel="noopener" class="btn-ghost-dark"><i class="fa-brands fa-whatsapp"></i> Na kontaktoni</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="values">
+  <div class="values-head reveal">
+    <span class="sec-tag">Pse ne</span>
+    <h2 class="sec-title">Vlerat tona <em>themelore</em></h2>
+    <div class="divider"></div>
+  </div>
+  <div class="values-grid">
+    <div class="val-card reveal">
+      <div class="val-icon"><i class="fa-solid fa-leaf"></i></div>
+      <div class="val-name">Cilësi e vërtetë</div>
+      <p class="val-desc">Çdo bimë dhe lule zgjidhet personalisht — kontrollohet freskia, shëndeti dhe pamja para se të arrijë tek ju.</p>
+    </div>
+    <div class="val-card reveal">
+      <div class="val-icon"><i class="fa-solid fa-comments"></i></div>
+      <div class="val-name">Këshillim i sinqertë</div>
+      <p class="val-desc">Nuk shesim produkte — ofrojmë zgjidhje. Specialistët tanë ju ndihmojnë të zgjidhni bimën e duhur për hapësirën tuaj.</p>
+    </div>
+    <div class="val-card reveal">
+      <div class="val-icon"><i class="fa-solid fa-bolt"></i></div>
+      <div class="val-name">Shërbim i shpejtë</div>
+      <p class="val-desc">Porosi nëpërmjet WhatsApp, konfirmim brenda 30 minutave dhe dërgesë brenda ditës për Tiranën e Durrësin.</p>
+    </div>
+    <div class="val-card reveal">
+      <div class="val-icon"><i class="fa-solid fa-building"></i></div>
+      <div class="val-name">Furnizim biznese</div>
+      <p class="val-desc">Hotele, restorante dhe zyra besojnë tek ne për furnizim të rregullt, çmime competitive dhe konsistencë të cilësisë.</p>
+    </div>
+    <div class="val-card reveal">
+      <div class="val-icon"><i class="fa-solid fa-recycle"></i></div>
+      <div class="val-name">Qasje e qëndrueshme</div>
+      <p class="val-desc">Punojmë me furnitorë lokalë dhe europianë që ndajnë vlerat tona mjedisore. Paktime të riciklueshme kudo që është e mundur.</p>
+    </div>
+    <div class="val-card reveal">
+      <div class="val-icon"><i class="fa-solid fa-heart"></i></div>
+      <div class="val-name">Dashuria për punën</div>
+      <p class="val-desc">Çdo buqetë, çdo aranzhim dhe çdo porosi trajtohet si e veçantë — sepse për ne, kjo nuk është vetëm biznes.</p>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- TIMELINE -->
+<section class="timeline">
+  <div class="timeline-head reveal">
+    <span class="sec-tag">Rruga jonë</span>
+    <h2 class="sec-title">Nga 2019 deri <em>sot</em></h2>
+    <div class="divider"></div>
+  </div>
+  <div class="tl-items">
+    <div class="tl-item reveal">
+      <div class="tl-year">2019</div>
+      <div class="tl-content">
+        <div class="tl-title">Fillimi i ëndrrës</div>
+        <p class="tl-desc">Fidanishte Green & Colours hap dyert e para në Durrës me një koleksion të kujdesshëm bimësh dhe lulesh. Produktet e para — lule të prera dhe bimë dekorative — gjejnë dashamirës të parë.</p>
+      </div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-year">2020</div>
+      <div class="tl-content">
+        <div class="tl-title">Zgjerimi i shërbimeve</div>
+        <p class="tl-desc">Nisim furnizimin e bizneseve — hoteleve dhe restoranteve. Prezenca në Instagram sjell klientë të rinj dhe rrit njohjen e brendit.</p>
+      </div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-year">2022</div>
+      <div class="tl-content">
+        <div class="tl-title">Platforma online</div>
+        <p class="tl-desc">Lansojmë mundësinë e porosive nëpërmjet WhatsApp dhe faqes web — duke bërë aksesin tek produktet tona edhe më të lehtë për klientët kudo.</p>
+      </div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-year">2024</div>
+      <div class="tl-content">
+        <div class="tl-title">Katalog i plotë digital</div>
+        <p class="tl-desc">Lansojmë katalogun e plotë online me filtrim sipas kategorisë, kart produkti me kujdes dhe sistem porosie direkt në WhatsApp.</p>
+      </div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-year">Sot</div>
+      <div class="tl-content">
+        <div class="tl-title">Vazhdojmë të rritemi</div>
+        <p class="tl-desc">Mbi 100 klientë të kënaqur, qindra varietete bimësh dhe shërbim 7 ditë në javë. Jemi krenarë me rrugën e bërë — dhe të etur për të ardhmen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-strip">
+  <div class="cta-text">
+    <h3>Gati të porositni apo<br>keni pyetje?</h3>
+    <p>Na shkruani në WhatsApp — ju ndihmojmë menjëherë.</p>
+  </div>
+  <a href="https://wa.me/355686648467" target="_blank" rel="noopener" class="btn-ink">
+    <i class="fa-brands fa-whatsapp"></i> Na kontaktoni tani
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Green <em>& Colours</em></div>
+    <div class="footer-links">
+      <a href="index.html">Kryefaqja</a>
+      <a href="index.html#produktet">Produktet</a>
+      <a href="rreth-nesh.html">Rreth Nesh</a>
+      <a href="blog.html">Blog</a>
+      <a href="index.html#kontakt">Kontakt</a>
+    </div>
+    <div class="footer-copy">&copy; 2026 Fidanishte Green & Colours</div>
+  </div>
+</footer>
+
+<!-- WhatsApp FAB -->
+<a class="fab-wa" href="https://wa.me/355686648467" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<script>
+  /* Nav */
+  window.addEventListener('scroll',()=>{
+    document.getElementById('nav').classList.toggle('stuck', window.scrollY>40);
+  },{passive:true});
+
+  /* Mobile menu */
+  function closeMM() { document.getElementById('mobileMenu').classList.remove('open'); }
+  document.getElementById('burger').addEventListener('click',()=> document.getElementById('mobileMenu').classList.add('open'));
+  document.getElementById('mmClose').addEventListener('click',closeMM);
+  document.querySelectorAll('#mobileMenu a').forEach(a=> a.addEventListener('click',closeMM));
+
+  /* Reveal */
+  const ro = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+  },{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+</script>
+</body>
+</html>

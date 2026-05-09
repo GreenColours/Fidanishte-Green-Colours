@@ -1332,8 +1332,7 @@
       }
       .gm-large, .gm-tall { grid-column: auto; grid-row: auto; }
     }
-  @keyframes sk{from{opacity:.5}to{opacity:1}}
-</style>
+  </style>
 </head>
 <body>
 
@@ -1748,48 +1747,11 @@
 <!-- ══════════════ JS ══════════════ -->
 <script>
 /* ── Data ── */
-/* ── Data (nga API) ── */
 let CATEGORIES = [];
 let PRODUCTS   = [];
+let BLOG_POSTS = [];
 
-const WORKER_URL = ''; /* bosh — përdor rrugë relative /api */
 
-async function fetchData(){
-  try {
-    const [catRes, prodRes] = await Promise.all([
-      fetch('/api/categories'),
-      fetch('/api/flowers')
-    ]);
-    if(catRes.ok)  CATEGORIES = await catRes.json();
-    if(prodRes.ok) PRODUCTS   = await prodRes.json();
-
-    /* Normalizo fushat për index.html */
-    PRODUCTS = PRODUCTS.map(p => ({
-      ...p,
-      group:        (p.category || '').toLowerCase().replace(/[^a-z0-9]+/g,'-'),
-      imageUrl:     p.img_url || p.imageUrl || '',
-      discountPrice:p.discount_price ?? p.discountPrice ?? null,
-      available:    p.available !== false,
-      care:         p.care_advice || p.care || {},
-    }));
-
-    CATEGORIES = CATEGORIES.map(c => ({
-      ...c,
-      img: c.img_url || '',
-    }));
-
-  } catch(e) {
-    console.warn('API fetch gabim:', e);
-  }
-}
-
-const BLOG_POSTS = [
-  { id: 1, title: 'Si të kujdeseni për Monsterat tuaj', category: 'Kujdesi i Bimëve', excerpt: 'Monstera Deliciosa është një nga bimët më të dashura dekorative. Ja si të siguroni rritjen e saj optimale...', date: '2026-04-15', readTime: '4 min', imageUrl: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=600&q=75' },
-  { id: 2, title: '10 Lule ideale për dasëm verore', category: 'Dekorime', excerpt: 'Zgjedhja e luleve të duhura për dasmën tuaj verore mund të bëjë ndryshim të madh. Zbuloni alternativat tona...', date: '2026-03-28', readTime: '5 min', imageUrl: 'https://images.unsplash.com/photo-1487530811015-780780fb0264?w=600&q=75' },
-  { id: 3, title: 'Kujdesi i fidanëve frutorë në shtëpi', category: 'Këshilla', excerpt: 'Fidanët frutorë mund të rriten edhe në ballkon. Gjithçka fillon me tokën e duhur dhe ujitjen korrekte...', date: '2026-03-10', readTime: '6 min', imageUrl: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=75' },
-  { id: 4, title: 'Bimët më të mira për zyrën tuaj', category: 'Kujdesi i Bimëve', excerpt: 'Bimët e duhura në zyrë rrisin produktivitetin dhe përmirësojnë cilësinë e ajrit. Zbuloni zgjedhjet tona...', date: '2026-02-20', readTime: '3 min', imageUrl: 'https://images.unsplash.com/photo-1585167151697-7f4a1349da45?w=600&q=75' },
-  { id: 5, title: 'Si të dekoroni kopshtin për pranverë', category: 'Këshilla', excerpt: 'Pranvera është koha e duhur për të ndryshuar pamjen e kopshtit. Ja disa ide praktike nga ekipi ynë...', date: '2026-01-15', readTime: '5 min', imageUrl: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=600&q=75' },
-];
 
 /* ── Helpers ── */
 const $  = id => document.getElementById(id);
@@ -1911,18 +1873,20 @@ let _activeGroup = 'all';
 let _searchQ = '';
 
 async function loadCatalog(){
-  /* Shfaq skeleton loader */
-  $('productGrid').innerHTML = Array(8).fill(0).map(()=>`
-    <div style="background:#fff;border-radius:3px;overflow:hidden;border:1px solid rgba(58,107,70,.08);">
-      <div style="height:220px;background:rgba(58,107,70,.06);animation:sk .8s ease-in-out alternate infinite;"></div>
-      <div style="padding:1rem;">
-        <div style="height:12px;background:rgba(58,107,70,.06);border-radius:2px;margin-bottom:.5rem;animation:sk .8s ease-in-out alternate infinite;"></div>
-        <div style="height:12px;width:60%;background:rgba(58,107,70,.06);border-radius:2px;animation:sk .8s ease-in-out alternate infinite;"></div>
-      </div>
-    </div>`).join('');
-
-  /* Ngarko të dhënat */
-  await fetchData();
+  try {
+    const [catRes, prodRes] = await Promise.all([
+      fetch('/api/categories'),
+      fetch('/api/flowers')
+    ]);
+    if(catRes.ok)  CATEGORIES = await catRes.json();
+    if(prodRes.ok) PRODUCTS   = (await prodRes.json()).map(p=>({
+      ...p,
+      imageUrl:     p.img_url || '',
+      discountPrice:p.discount_price ?? null,
+      available:    p.available !== false,
+      care:         {}  /* care_advice is plain text, shown in description */
+    }));
+  } catch(e){ console.warn('loadCatalog error:', e); }
 
   renderCategoryCards();
   renderFilterPills();
@@ -1938,10 +1902,7 @@ function renderCategoryCards(){
     const count = PRODUCTS.filter(p=>(p.category||'')===(g.name||'')).length;
     return `
       <div class="cat-card reveal" onclick="setGroupFilter('${esc(g.name)}')">
-        ${g.img
-          ? `<img src="${g.img}" alt="${esc(g.name)}" loading="lazy">`
-          : `<div style="width:100%;height:100%;background:var(--forest);display:flex;align-items:center;justify-content:center;font-size:3rem;">${g.emoji||'🌸'}</div>`
-        }
+        ${g.img_url ? `<img src="${esc(g.img_url)}" alt="${esc(g.name)}" loading="lazy" onerror="this.style.opacity='0'">` : ''}
         <div class="cat-card-overlay"></div>
         <div class="cat-card-body">
           <div class="cat-card-name">${esc(g.name)}</div>
@@ -1966,7 +1927,7 @@ function renderFilterPills(){
   const wrap = $('filterPills');
   const pills = [
     `<button class="pill active" data-filter="all" onclick="setGroupFilter('all')">Të gjitha</button>`,
-    ...CATEGORIES.map(g=>`<button class="pill" data-filter="${esc(g.name)}" onclick="setGroupFilter('${esc(g.name)}')">${esc(g.emoji||'')} ${esc(g.name)}</button>`)
+    ...CATEGORIES.map(g=>`<button class="pill" data-filter="${esc(g.id)}" onclick="setGroupFilter('${esc(g.name)}')">${esc(g.name)}</button>`)
   ];
   wrap.innerHTML = pills.join('');
 }
@@ -1975,11 +1936,7 @@ $('searchInput').addEventListener('input', e=>{ _searchQ=e.target.value.toLowerC
 
 function applyFilters(){
   let list = PRODUCTS;
-  if(_activeGroup!=='all') list=list.filter(p=>{
-    const pg = (p.category||'').toLowerCase().replace(/[^a-z0-9]+/g,'-');
-    const ag = _activeGroup.toLowerCase().replace(/[^a-z0-9]+/g,'-');
-    return pg === ag || p.category === _activeGroup;
-  });
+  if(_activeGroup!=='all') list=list.filter(p=>(p.category||'')===_activeGroup);
   if(_searchQ) list=list.filter(p=>(p.name||'').toLowerCase().includes(_searchQ)||(p.description||'').toLowerCase().includes(_searchQ));
   _filteredProducts = list;
   _page = 0;
@@ -2043,13 +2000,13 @@ function openQV(id){
   _qvId = id;
   const dp = p.discountPrice;
   const price = Number(p.price||0);
-  const care = (typeof p.care_advice === 'string' ? JSON.parse(p.care_advice||'{}') : p.care) || p.care || {};
+  const care = p.care || {};
 
   $('qvImg').src = p.imageUrl || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=80';
   $('qvImg').alt = p.name||'';
   $('qvCat').textContent = p.category || '';
   $('qvTitle').textContent = p.name||'';
-  $('qvDesc').textContent  = p.description||'Bimë premium e zgjedhur me kujdes — për freski, shëndet dhe elegancë.';
+  $('qvDesc').textContent  = p.description || p.care_advice || 'Bimë premium e zgjedhur me kujdes — për freski, shëndet dhe elegancë.';
   $('qvPrice').innerHTML   = dp!=null ? `${dp} L <span style="font-size:1rem;text-decoration:line-through;color:rgba(255,255,255,.3)">${price} L</span>` : `${price} L`;
   $('qvLight').textContent  = care.light||'E mesme';
   $('qvWater').textContent  = care.water||'2x javë';
@@ -2078,22 +2035,14 @@ function openQV(id){
 /* ── Blog ── */
 async function loadBlog(){
   try {
-    const res  = await fetch('/api/blog');
+    const res = await fetch('/api/blog');
     if(res.ok) {
       const data = await res.json();
-      BLOG_POSTS = data.map(p => ({
-        ...p,
-        imageUrl: p.img_url || '',
-        excerpt:  p.content ? p.content.substring(0,120)+'...' : '',
-      }));
+      BLOG_POSTS = data.map(p=>({...p, imageUrl: p.img_url||'', excerpt: p.content?(p.content.substring(0,120)+'...'):''}));
     }
-  } catch(e) { console.warn('Blog fetch gabim:', e); }
-
+  } catch(e){ console.warn('loadBlog error:', e); }
   const grid = $('blogGrid');
-  if(!BLOG_POSTS.length){
-    grid.innerHTML = '<p style="text-align:center;padding:2rem;color:rgba(13,31,20,.4);">Nuk ka artikuj aktualisht.</p>';
-    return;
-  }
+  if(!BLOG_POSTS.length){ grid.innerHTML='<p style="text-align:center;padding:2rem;color:rgba(13,31,20,.4);">Nuk ka artikuj aktualisht.</p>'; return; }
   grid.innerHTML = BLOG_POSTS.slice(0,3).map(p=>{
     const img = p.imageUrl||p.img||p.image||'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=75';
     const exc = (p.excerpt||p.content||'').substring(0,110);
@@ -2108,29 +2057,26 @@ async function loadBlog(){
         </div>
       </a>`;
   }).join('');
-
 }
 
 /* ── Init ── */
-/* Ngarko settings (hero_img, about_img) */
+(async()=>{ await loadCatalog(); })();
+loadBlog();
+
 async function loadSettings(){
   try {
     const res  = await fetch('/api/settings');
+    if(!res.ok) return;
     const data = await res.json();
     if(!Array.isArray(data)) return;
-    const get  = key => (data.find(s=>s.key===key)||{}).value || '';
-    const heroImg  = get('hero_img');
-    const aboutImg = get('about_img');
-    if(heroImg)  { const el = document.querySelector('.hero-main-img, #heroImg, .hero-img'); if(el) el.src = heroImg; }
-    if(aboutImg) { const el = document.querySelector('.about-img, #aboutImg'); if(el) el.src = aboutImg; }
-  } catch(e) {}
+    const get = k => (data.find(s=>s.key===k)||{}).value||'';
+    const hi = get('hero_img');
+    const ai = get('about_img');
+    if(hi){ const el=document.querySelector('.hero-img,#heroImg,[data-hero-img]'); if(el) el.src=hi; }
+    if(ai){ const el=document.querySelector('.about-img,#aboutImg,[data-about-img]'); if(el) el.src=ai; }
+  } catch(e){}
 }
-
-(async () => {
-  await loadCatalog();
-  await loadSettings();
-  await loadBlog();
-})();
+loadSettings();
 
 </script>
 

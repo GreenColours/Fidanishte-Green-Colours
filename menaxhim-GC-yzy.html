@@ -1438,7 +1438,7 @@ function renderFlowers() {
 
 async function toggleAvail(id, e) {
   e.stopPropagation();
-  var f = _flowers.find(function(x){ return x.id === id; });
+  var f = _flowers.find(function(x){ return x.id == id; });
   if (!f) return;
   
   var cleanId = String(id).replace('id_', '');
@@ -1668,7 +1668,7 @@ async function updateCat() {
 }
 
 function confirmDeleteCat(id) {
-  var c = _categories.find(function(x){ return x.id === id; });
+  var c = _categories.find(function(x){ return x.id == id; });
   if (!c) return;
   var count = _flowers.filter(function(f){ return f.category === c.name; }).length;
   document.getElementById('confirmMsg').textContent = count > 0
@@ -1905,7 +1905,7 @@ async function saveBlog() {
 }
 
 function confirmDeleteBlog(id) {
-  var b = _blog.find(function(x) { return x.id === id; });
+  var b = _blog.find(function(x) { return x.id == id; });
   if (!b) return;
   document.getElementById('confirmMsg').textContent = 'A jeni të sigurt që dëshironi të fshini artikullin "' + b.title + '"? Kjo do të fshijë edhe foton nga serveri.';
   document.getElementById('confirmBtn').onclick = async function() {

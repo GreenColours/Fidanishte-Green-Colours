@@ -1037,6 +1037,12 @@ async function apiFetch(path, options = {}) {
     ...options.headers
   };
 
+  // Heqim slash-in e fundit nese ekziston per te shmangur problemet me route
+  let cleanPath = path.split('?')[0];
+  if (cleanPath.endsWith('/')) {
+    path = cleanPath.slice(0, -1) + (path.includes('?') ? '?' + path.split('?')[1] : '');
+  }
+
   try {
     const resp = await fetch(`${WORKER_URL}${path}`, { ...options, headers });
     if (resp.status === 401) {
@@ -1542,7 +1548,7 @@ function confirmDeleteFlower(id) {
     // 1. Fshijmë foton nga Storage nëse është foto e ngarkuar te ne
     if (f.img_url && f.img_url.includes('supabase.co/storage/v1/object/public/images/')) {
       const fileName = f.img_url.split('/').pop();
-      await apiFetch(`/storage/?name=${fileName}`, { method: 'DELETE' });
+      await apiFetch(`/storage?name=${fileName}`, { method: 'DELETE' });
     }
 
     // 2. Fshijmë lulen nga Database
@@ -1725,7 +1731,7 @@ async function handleFileUpload(input, targetId, previewId) {
     const fileName = `img_${Date.now()}.${ext}`;
     
     // 3. Upload ne Supabase Storage permes Worker-it tone
-    const res = await fetch(`${WORKER_URL}/storage/?name=${fileName}`, {
+    const res = await fetch(`${WORKER_URL}/storage?name=${fileName}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'image/webp',

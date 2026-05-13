@@ -1884,7 +1884,11 @@ async function loadCatalog(){
       imageUrl:     p.img_url || p.image_url || p.imageUrl || p.image || '',
       discountPrice:p.discount_price ?? null,
       available:    p.available !== false,
-      care:         {}  /* care_advice is plain text, shown in description */
+      care:         {
+        light: p.care_light || 'E mesme',
+        water: p.care_water || '2x javë',
+        temp:  p.care_temp  || '15–28°C'
+      }
     }));
   } catch(e){ console.warn('loadCatalog error:', e); }
 
@@ -2006,12 +2010,12 @@ function openQV(id){
   $('qvImg').alt = p.name||'';
   $('qvCat').textContent = p.category || '';
   $('qvTitle').textContent = p.name||'';
-  $('qvDesc').textContent  = p.description || p.care_advice || 'Bimë premium e zgjedhur me kujdes — për freski, shëndet dhe elegancë.';
+  $('qvDesc').textContent  = p.description || 'Bimë premium e zgjedhur me kujdes — për freski, shëndet dhe elegancë.';
   $('qvPrice').innerHTML   = dp!=null ? `${dp} L <span style="font-size:1rem;text-decoration:line-through;color:rgba(255,255,255,.3)">${price} L</span>` : `${price} L`;
-  $('qvLight').textContent  = care.light||'E mesme';
-  $('qvWater').textContent  = care.water||'2x javë';
-  $('qvCareLabel').textContent = care.label3||'Temp';
-  $('qvTemp').textContent   = care.temp||'15–28°C';
+  $('qvLight').textContent  = care.light;
+  $('qvWater').textContent  = care.water;
+  $('qvCareLabel').textContent = 'Temp';
+  $('qvTemp').textContent   = care.temp;
 
   const msg = encodeURIComponent(`Përshëndetje! Jam i interesuar për: ${p.name} — ${dp??price} L`);
   $('qvWA').href = `https://wa.me/355686648467?text=${msg}`;

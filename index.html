@@ -1382,7 +1382,7 @@
 <!-- ══ HERO ══ -->
 <section id="hero">
   <!-- Left content -->
-  <div class="hero-left">
+  <div class="hero-left" id="heroSection">
     <div style="position:relative;padding-bottom:5rem;">
       <div class="hero-eyebrow">🌸 Lule të freskëta çdo ditë</div>
 
@@ -1490,7 +1490,7 @@
   </div>
 
   <div class="about-visual reveal">
-    <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1000&q=85" alt="Fidanishtja jonë" loading="lazy">
+    <img id="aboutImg" src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1000&q=85" alt="Fidanishtja jonë" loading="lazy">
   </div>
 </div>
 
@@ -1881,7 +1881,7 @@ async function loadCatalog(){
     if(catRes.ok)  CATEGORIES = await catRes.json();
     if(prodRes.ok) PRODUCTS   = (await prodRes.json()).map(p=>({
       ...p,
-      imageUrl:     p.img_url || '',
+      imageUrl:     p.img_url || p.image_url || p.imageUrl || p.image || '',
       discountPrice:p.discount_price ?? null,
       available:    p.available !== false,
       care:         {}  /* care_advice is plain text, shown in description */
@@ -2038,7 +2038,11 @@ async function loadBlog(){
     const res = await fetch('/api/blog');
     if(res.ok) {
       const data = await res.json();
-      BLOG_POSTS = data.map(p=>({...p, imageUrl: p.img_url||'', excerpt: p.content?(p.content.substring(0,120)+'...'):''}));
+      BLOG_POSTS = data.map(p=>({
+        ...p, 
+        imageUrl: p.img_url || p.image_url || p.imageUrl || p.image || '', 
+        excerpt: p.content ? (p.content.substring(0,120) + '...') : ''
+      }));
     }
   } catch(e){ console.warn('loadBlog error:', e); }
   const grid = $('blogGrid');
@@ -2072,9 +2076,21 @@ async function loadSettings(){
     const get = k => (data.find(s=>s.key===k)||{}).value||'';
     const hi = get('hero_img');
     const ai = get('about_img');
-    if(hi){ const el=document.querySelector('.hero-img,#heroImg,[data-hero-img]'); if(el) el.src=hi; }
-    if(ai){ const el=document.querySelector('.about-img,#aboutImg,[data-about-img]'); if(el) el.src=ai; }
-  } catch(e){}
+    
+    if(hi){ 
+      const el = $('heroSection');
+      if(el) {
+        // Krijojmë një rule CSS dinamike për pseudo-elementin ::before
+        const style = document.createElement('style');
+        style.innerHTML = `#heroSection::before { background-image: url('${hi}') !important; }`;
+        document.head.appendChild(style);
+      }
+    }
+    if(ai){ 
+      const el = $('aboutImg'); 
+      if(el) el.src = ai; 
+    }
+  } catch(e){ console.warn('loadSettings error:', e); }
 }
 loadSettings();
 

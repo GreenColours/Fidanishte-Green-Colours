@@ -128,14 +128,22 @@ export async function onRequest({ request, env, params }) {
         if (!id) return err('ID mungon');
         const body = sanitize(await request.json());
         const res  = await sb(`flowers?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(body) });
+        if (!res.ok) {
+          const errText = await res.text();
+          return err(`Supabase error: ${errText}`, res.status);
+        }
         const data = await res.json();
-        return ok(data, res.status);
+        return ok(data);
       }
 
       if (method === 'DELETE') {
         const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
         if (!id) return err('ID mungon');
-        await sb(`flowers?id=eq.${id}`, { method: 'DELETE' });
+        const res = await sb(`flowers?id=eq.${id}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const errText = await res.text();
+          return err(`Supabase error: ${errText}`, res.status);
+        }
         return ok({ deleted: true });
       }
     }
@@ -166,14 +174,22 @@ export async function onRequest({ request, env, params }) {
         if (!id) return err('ID mungon');
         const body = sanitize(await request.json());
         const res  = await sb(`blog?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(body) });
+        if (!res.ok) {
+          const errText = await res.text();
+          return err(`Supabase error: ${errText}`, res.status);
+        }
         const data = await res.json();
-        return ok(data, res.status);
+        return ok(data);
       }
 
       if (method === 'DELETE') {
         const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
         if (!id) return err('ID mungon');
-        await sb(`blog?id=eq.${id}`, { method: 'DELETE' });
+        const res = await sb(`blog?id=eq.${id}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const errText = await res.text();
+          return err(`Supabase error: ${errText}`, res.status);
+        }
         return ok({ deleted: true });
       }
     }
@@ -204,14 +220,22 @@ export async function onRequest({ request, env, params }) {
         if (!id) return err('ID mungon');
         const body = sanitize(await request.json());
         const res  = await sb(`categories?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(body) });
+        if (!res.ok) {
+          const errText = await res.text();
+          return err(`Supabase error: ${errText}`, res.status);
+        }
         const data = await res.json();
-        return ok(data, res.status);
+        return ok(data);
       }
 
       if (method === 'DELETE') {
         const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
         if (!id) return err('ID mungon');
-        await sb(`categories?id=eq.${id}`, { method: 'DELETE' });
+        const res = await sb(`categories?id=eq.${id}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const errText = await res.text();
+          return err(`Supabase error: ${errText}`, res.status);
+        }
         return ok({ deleted: true });
       }
     }
@@ -240,7 +264,11 @@ export async function onRequest({ request, env, params }) {
       if (method === 'DELETE') {
         const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
         if (!id) return err('ID mungon');
-        await sb(`occasions?id=eq.${id}`, { method: 'DELETE' });
+        const res = await sb(`occasions?id=eq.${id}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const errText = await res.text();
+          return err(`Supabase error: ${errText}`, res.status);
+        }
         return ok({ deleted: true });
       }
     }

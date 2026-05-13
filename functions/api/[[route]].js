@@ -297,7 +297,7 @@ export async function onRequest({ request, env, params }) {
         const order = {
           phone:  phone,
           items:  JSON.stringify(body.items),
-          total:  body.total || 0,
+          total_amount:  body.total || body.total_amount || 0,
           status: 'e re',
           created_at: new Date().toISOString(),
         };

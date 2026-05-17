@@ -1884,10 +1884,11 @@ async function loadCatalog(){
       imageUrl:     p.img_url || p.image_url || p.imageUrl || p.image || '',
       discountPrice:p.discount_price ?? null,
       available:    p.available !== false,
+      care_advice:  p.care_advice || '',
       care:         {
-        light: p.care_light || 'E mesme',
-        water: p.care_water || '2x javë',
-        temp:  p.care_temp  || '15–28°C'
+        light: p.care_light || (p.care_advice ? p.care_advice : 'E mesme'),
+        water: p.care_water || (p.care_advice ? '' : '2x javë'),
+        temp:  p.care_temp  || (p.care_advice ? '' : '15–28°C')
       }
     }));
   } catch(e){ console.warn('loadCatalog error:', e); }
@@ -1931,7 +1932,7 @@ function renderFilterPills(){
   const wrap = $('filterPills');
   const pills = [
     `<button class="pill active" data-filter="all" onclick="setGroupFilter('all')">Të gjitha</button>`,
-    ...CATEGORIES.map(g=>`<button class="pill" data-filter="${esc(g.id)}" onclick="setGroupFilter('${esc(g.name)}')">${esc(g.name)}</button>`)
+    ...CATEGORIES.map(g=>`<button class="pill" data-filter="${esc(g.name)}" onclick="setGroupFilter('${esc(g.name)}')">${esc(g.name)}</button>`)
   ];
   wrap.innerHTML = pills.join('');
 }
@@ -1965,13 +1966,13 @@ function renderProducts(reset){
     const badge = !avail ? `<span class="pc-badge pc-badge-out">S'ka gjendje</span>`
                  : (p.badge ? `<span class="pc-badge${p.badge.toLowerCase().includes('premium')||p.badge.toLowerCase().includes('ulje')?' pc-badge-gold':''}">${esc(p.badge)}</span>` : '');
     return `
-      <div class="pc" onclick="openQV('${esc(p.id)}')">
-        <div class="pc-img">
-          ${badge}
-          <img src="${esc(p.imageUrl||'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=60')}"
-               alt="${esc(p.name)}" loading="lazy"
-               onerror="this.src='https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=60'">
-        </div>
+            <div class="pc" onclick="openQV('${esc(p.id)}')">
+              <div class="pc-img">
+                ${badge}
+                <img src="${p.imageUrl ? esc(p.imageUrl) : 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=60'}"
+                     alt="${esc(p.name)}" loading="lazy"
+                     onerror="this.src='https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=60'; this.onerror=null;">
+              </div>
         <div class="pc-body">
           <div class="pc-cat">${esc(p.category||'')}</div>
           <div class="pc-name">${esc(p.name)}</div>
@@ -2006,7 +2007,8 @@ function openQV(id){
   const price = Number(p.price||0);
   const care = p.care || {};
 
-  $('qvImg').src = p.imageUrl || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=80';
+  $('qvImg').src = p.imageUrl ? p.imageUrl : 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=80';
+  $('qvImg').onerror = function() { this.src='https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=80'; this.onerror=null; };
   $('qvImg').alt = p.name||'';
   $('qvCat').textContent = p.category || '';
   $('qvTitle').textContent = p.name||'';
@@ -2068,7 +2070,10 @@ async function loadBlog(){
 }
 
 /* ── Init ── */
-(async()=>{ await loadCatalog(); })();
+(async()=>{ 
+  await loadCatalog(); 
+  await loadSettings();
+})();
 loadBlog();
 
 async function loadSettings(){

@@ -1057,7 +1057,7 @@ async function apiFetch(path, options = {}) {
     const data = await resp.json();
     if (!resp.ok) {
       console.error('Server error:', data);
-      throw new Error(data.message || 'Gabim në server');
+      throw new Error(data.error || data.message || 'Gabim në server');
     }
     return data;
   } catch (e) {
@@ -1472,7 +1472,7 @@ function openAddFlower() {
 }
 
 function openEditFlower(id) {
-  var f = _flowers.find(function(x){ return x.id === id; });
+  var f = _flowers.find(function(x){ return String(x.id) == String(id); });
   if (!f) return;
   document.getElementById('fId').value    = f.id;
   document.getElementById('fName').value  = f.name;
@@ -1541,12 +1541,12 @@ async function saveFlower() {
 }
 
 function confirmDeleteFlower(id) {
-  var f = _flowers.find(function(x){ return x.id === id; });
+  var f = _flowers.find(function(x){ return x.id == id; });
   if (!f) return;
   document.getElementById('confirmMsg').textContent = 'A jeni të sigurt që dëshironi të fshini "' + f.name + '"? Ky veprim nuk mund të zhbëhet dhe do të fshijë edhe foton nga serveri.';
   document.getElementById('confirmBtn').onclick = async function(){
     // 1. Fshijmë foton nga Storage nëse është foto e ngarkuar te ne
-    if (f.img_url && f.img_url.includes('supabase.co/storage/v1/object/public/images/')) {
+    if (f.img_url && f.img_url.includes('/storage/v1/object/public/images/')) {
       const fileName = f.img_url.split('/').pop();
       await apiFetch(`/storage?name=${fileName}`, { method: 'DELETE' });
     }
@@ -1638,7 +1638,7 @@ function focusCatName() {
 }
 
 function openEditCat(id) {
-  var c = _categories.find(function(x){ return x.id === id; });
+  var c = _categories.find(function(x){ return x.id == id; });
   if (!c) return;
   document.getElementById('ecId').value    = c.id;
   document.getElementById('ecName').value  = c.name;
@@ -1741,12 +1741,12 @@ async function handleFileUpload(input, targetId, previewId) {
     });
 
     if (!res.ok) throw new Error('Upload dështoi');
+    
+    // 4. Marrim URL-ne publike nga përgjigja e API-së
+    const data = await res.json();
+    const publicUrl = data.url;
 
-    // 4. Marrim URL-ne publike (Supabase Storage URL format)
-    // Ne rastin tone: https://[PROJ_ID].supabase.co/storage/v1/object/public/images/[FILENAME]
-    // Ne po e marrim direkt nga SUPABASE_URL qe kemi ne env, por ketu e ndertojme nga Worker_URL nese duam
-    const SUPABASE_PROJECT_URL = 'https://oewfdgiakzhjqrhdcwds.supabase.co'; // Ky eshte projekti juaj
-    const publicUrl = `${SUPABASE_PROJECT_URL}/storage/v1/object/public/images/${fileName}`;
+    if (!publicUrl) throw new Error('URL nuk u kthye nga serveri');
 
     document.getElementById(targetId).value = publicUrl;
     
@@ -1850,7 +1850,7 @@ function openAddBlog() {
 }
 
 function openEditBlog(id) {
-  var b = _blog.find(function(x) { return x.id === id; });
+  var b = _blog.find(function(x) { return x.id == id; });
   if (!b) return;
   
   var fields = {
@@ -1910,9 +1910,9 @@ function confirmDeleteBlog(id) {
   document.getElementById('confirmMsg').textContent = 'A jeni të sigurt që dëshironi të fshini artikullin "' + b.title + '"? Kjo do të fshijë edhe foton nga serveri.';
   document.getElementById('confirmBtn').onclick = async function() {
     // 1. Fshijmë foton nga Storage
-    if (b.img_url && b.img_url.includes('supabase.co/storage/v1/object/public/images/')) {
+    if (b.img_url && b.img_url.includes('/storage/v1/object/public/images/')) {
       const fileName = b.img_url.split('/').pop();
-      await apiFetch(`/storage/?name=${fileName}`, { method: 'DELETE' });
+      await apiFetch(`/storage?name=${fileName}`, { method: 'DELETE' });
     }
 
     // 2. Fshijmë artikullin nga Database

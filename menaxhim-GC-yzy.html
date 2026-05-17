@@ -1613,9 +1613,12 @@ async function saveCat() {
   var img_url = document.getElementById('catImg').value.trim();
   if (!name) { toast('Emri i koleksionit është i detyrueshëm!', 'err'); return; }
   
+  const bodyData = { name, emoji, color };
+  if (img_url) bodyData.img_url = img_url;
+
   const res = await apiFetch('/categories', {
     method: 'POST',
-    body: JSON.stringify({ name, emoji, color, img_url })
+    body: JSON.stringify(bodyData)
   });
 
   if (res) {
@@ -1656,9 +1659,13 @@ async function updateCat() {
   if (!name) { toast('Emri është i detyrueshëm!', 'err'); return; }
   
   var cleanId = String(id).replace('id_', '');
+  
+  const bodyData = { name, emoji, color };
+  if (img_url) bodyData.img_url = img_url;
+
   const res = await apiFetch(`/categories?id=eq.${cleanId}`, {
     method: 'PUT',
-    body: JSON.stringify({ name, emoji, color, img_url })
+    body: JSON.stringify(bodyData)
   });
 
   if (res) {

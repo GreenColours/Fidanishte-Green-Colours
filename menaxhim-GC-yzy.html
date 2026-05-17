@@ -942,9 +942,21 @@ textarea.form-control{resize:vertical;min-height:75px;}
           <label>Përshkrimi</label>
           <textarea class="form-control" id="fDesc" placeholder="Përshkruani lulen..."></textarea>
         </div>
+        <div class="form-group">
+          <label>Drita</label>
+          <input type="text" class="form-control" id="fCareLight" placeholder="p.sh. E mesme"/>
+        </div>
+        <div class="form-group">
+          <label>Ujitja</label>
+          <input type="text" class="form-control" id="fCareWater" placeholder="p.sh. 2x javë"/>
+        </div>
+        <div class="form-group">
+          <label>Temperatura</label>
+          <input type="text" class="form-control" id="fCareTemp" placeholder="p.sh. 15–28°C"/>
+        </div>
         <div class="form-group form-full">
-          <label>Këshilla për Kujdesin (Care Advice)</label>
-          <textarea class="form-control" id="fCare" placeholder="p.sh. Mbajeni në dritë, ujiteni 2 herë në javë..."></textarea>
+          <label>Shënim për Kujdesin (Care Note)</label>
+          <textarea class="form-control" id="fCare" placeholder="p.sh. Mbajeni larg korrenteve të ajrit..."></textarea>
         </div>
         <div class="form-group form-full">
           <label>Disponibiliteti</label>
@@ -1461,6 +1473,9 @@ function openAddFlower() {
   document.getElementById('fDiscountPrice').value = '';
   document.getElementById('fDesc').value  = '';
   document.getElementById('fCare').value  = '';
+  document.getElementById('fCareLight').value = '';
+  document.getElementById('fCareWater').value = '';
+  document.getElementById('fCareTemp').value = '';
   document.getElementById('fImg').value   = '';
   document.getElementById('fAvail').checked = true;
   populateOccCheckboxes([]);
@@ -1480,6 +1495,9 @@ function openEditFlower(id) {
   document.getElementById('fDiscountPrice').value = f.discount_price || '';
   document.getElementById('fDesc').value  = f.description || '';
   document.getElementById('fCare').value  = f.care_advice || '';
+  document.getElementById('fCareLight').value = f.care_light || '';
+  document.getElementById('fCareWater').value = f.care_water || '';
+  document.getElementById('fCareTemp').value = f.care_temp || '';
   document.getElementById('fImg').value   = f.img_url || '';
   document.getElementById('fAvail').checked = f.available;
   
@@ -1500,6 +1518,9 @@ async function saveFlower() {
   var discount_price = parseFloat(document.getElementById('fDiscountPrice').value) || null;
   var description = document.getElementById('fDesc').value.trim();
   var care_advice = document.getElementById('fCare').value.trim();
+  var care_light  = document.getElementById('fCareLight').value.trim();
+  var care_water  = document.getElementById('fCareWater').value.trim();
+  var care_temp   = document.getElementById('fCareTemp').value.trim();
   var img_url = document.getElementById('fImg').value.trim();
   var available = document.getElementById('fAvail').checked;
   
@@ -1518,6 +1539,9 @@ async function saveFlower() {
     discount_price: discount_price === 0 ? null : discount_price, 
     description, 
     care_advice, 
+    care_light,
+    care_water,
+    care_temp,
     img_url, 
     available, 
     occasions 

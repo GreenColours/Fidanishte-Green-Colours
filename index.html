@@ -6,7 +6,7 @@
   <title>Green & Colours — Fidanishte Premium · Durrës</title>
   <meta name="description" content="Fidanishte Green & Colours — lule, bimë dekorative dhe fidanë frutorë premium. Porosi online nëpërmjet WhatsApp." />
   <meta property="og:title" content="Green & Colours — Fidanishte Premium" />
-  <meta property="og:image" content="https://images.unsplash.com/photo-1487530811015-780780fb0264?w=1200&q=80" />
+  <meta property="og:image" content="assets/og-image.jpg" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌿%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -194,7 +194,7 @@
     .hero-left::before {
       content: '';
       position: absolute; inset: 0;
-      background: url('https://images.unsplash.com/photo-1487530811015-780780fb0264?w=900&q=85') center/cover no-repeat;
+      background-color: var(--forest);
       opacity: .28;
     }
 
@@ -1503,7 +1503,7 @@
   </div>
 
   <div class="about-visual reveal">
-    <img id="aboutImg" src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1000&q=85" alt="Fidanishtja jonë" loading="lazy">
+    <img id="aboutImg" src="assets/about-placeholder.jpg" alt="Fidanishtja jonë" loading="lazy" onerror="this.style.display='none'">
   </div>
 </div>
 
@@ -1910,11 +1910,12 @@ async function loadCatalog(){
 /* ── Category cards ── */
 function renderCategoryCards(){
   const grid = $('catGrid');
-  grid.innerHTML = CATEGORIES.slice(0,6).map((g,i)=>{
+  grid.innerHTML = CATEGORIES.map((g,i)=>{
     const count = PRODUCTS.filter(p=>(p.category||'')===(g.name||'')).length;
+    const bgStyle = g.color ? `background-color: ${g.color}33;` : '';
     return `
-      <div class="cat-card reveal" onclick="setGroupFilter('${esc(g.name)}')">
-        ${g.img_url ? `<img src="${esc(g.img_url)}" alt="${esc(g.name)}" loading="lazy" onerror="this.style.opacity='0'">` : ''}
+      <div class="cat-card reveal" onclick="setGroupFilter('${esc(g.name)}')" style="${bgStyle}">
+        ${g.img_url ? `<img src="${esc(g.img_url)}" alt="${esc(g.name)}" loading="lazy" onerror="this.style.display='none'">` : (g.emoji ? `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:4rem;opacity:0.3;">${g.emoji}</div>` : '')}
         <div class="cat-card-overlay"></div>
         <div class="cat-card-body">
           <div class="cat-card-name">${esc(g.name)}</div>
@@ -1985,9 +1986,9 @@ function renderProducts(reset){
             <div class="pc" onclick="openQV('${esc(p.id)}')">
               <div class="pc-img">
                 ${badge}
-                <img src="${p.imageUrl ? esc(p.imageUrl) : 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=60'}"
+                <img src="${p.imageUrl ? esc(p.imageUrl) : 'assets/placeholder.jpg'}"
                      alt="${esc(p.name)}" loading="lazy"
-                     onerror="this.src='https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=60'; this.onerror=null;">
+                     onerror="this.style.display='none';">
               </div>
         <div class="pc-body">
           <div class="pc-cat">${esc(p.category||'')}</div>
@@ -2023,8 +2024,8 @@ function openQV(id){
   const price = Number(p.price||0);
   const care = p.care || {};
 
-  $('qvImg').src = p.imageUrl ? p.imageUrl : 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=80';
-  $('qvImg').onerror = function() { this.src='https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=80'; this.onerror=null; };
+  $('qvImg').src = p.imageUrl ? p.imageUrl : 'assets/placeholder.jpg';
+  $('qvImg').onerror = function() { this.style.display='none'; };
   $('qvImg').alt = p.name||'';
   $('qvCat').textContent = p.category || '';
   $('qvTitle').textContent = p.name||'';
@@ -2071,11 +2072,11 @@ async function loadBlog(){
   const grid = $('blogGrid');
   if(!BLOG_POSTS.length){ grid.innerHTML='<p style="text-align:center;padding:2rem;color:rgba(13,31,20,.4);">Nuk ka artikuj aktualisht.</p>'; return; }
   grid.innerHTML = BLOG_POSTS.slice(0,3).map(p=>{
-    const img = p.imageUrl||p.img||p.image||'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=75';
+    const img = p.imageUrl||p.img||p.image||'assets/placeholder.jpg';
     const exc = (p.excerpt||p.content||'').substring(0,110);
     return `
       <a class="blog-card-new" href="blog.html">
-        <div class="bcn-img-wrap"><img class="bcn-img" src="${esc(img)}" alt="${esc(p.title||'')}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=75'"></div>
+        <div class="bcn-img-wrap"><img class="bcn-img" src="${esc(img)}" alt="${esc(p.title||'')}" loading="lazy" onerror="this.style.display='none'"></div>
         <div class="bcn-body">
           <div class="bcn-tag">${esc(p.category||'Blog')}</div>
           <div class="bcn-title">${esc(p.title||'Pa titull')}</div>

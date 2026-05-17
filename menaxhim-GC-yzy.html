@@ -553,7 +553,7 @@ textarea.form-control{resize:vertical;min-height:75px;}
         <i class="fas fa-seedling"></i> Lulet
       </div>
       <div class="sb-item" onclick="goPage('categories')">
-        <i class="fas fa-tags"></i> Kategoritë
+        <i class="fas fa-layer-group"></i> Koleksionet
       </div>
       <div class="sb-item" onclick="goPage('orders')">
         <i class="fas fa-shopping-bag"></i> Porositë & Klientët
@@ -719,17 +719,29 @@ textarea.form-control{resize:vertical;min-height:75px;}
         </div>
       </div>
 
-      <!-- ═══ KATEGORITE ═══ -->
+      <!-- ═══ KOLEKSIONET ═══ -->
       <div class="page" id="page-categories">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
           <div class="card" style="margin-bottom:0;">
             <div class="card-header">
-              <div class="card-title"><i class="fas fa-plus-circle"></i> Shto Kategori të Re</div>
+              <div class="card-title"><i class="fas fa-plus-circle"></i> Shto Koleksion të Ri</div>
             </div>
             <div class="card-body">
               <div class="form-grid" style="gap:.8rem;">
                 <div class="form-group form-full">
-                  <label>Emri i Kategorisë <span>*</span></label>
+                  <label>Foto e Koleksionit</label>
+                  <div style="display:flex; gap:10px; align-items: flex-start;">
+                    <div style="flex:1;">
+                      <input type="text" class="form-control" id="catImg" placeholder="URL e fotos..." oninput="previewCatImg()"/>
+                      <input type="file" class="form-control" accept="image/*" onchange="handleFileUpload(this, 'catImg', 'catImgPreview')" style="margin-top:5px; font-size:12px; padding:4px;"/>
+                    </div>
+                    <div class="img-preview" id="catImgPreview" style="width:100px; height:100px; margin-top:0;">
+                      <i class="fas fa-image"></i><span>Foto</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group form-full">
+                  <label>Emri i Koleksionit <span>*</span></label>
                   <input type="text" class="form-control" id="catName" placeholder="p.sh. Lule Tropikale..."/>
                 </div>
                 <div class="form-group">
@@ -752,7 +764,7 @@ textarea.form-control{resize:vertical;min-height:75px;}
                   <div class="cat-card" id="catPreview">
                     <div class="cat-emoji" id="catPrevEmoji" style="background:#e8f5e9;">🌸</div>
                     <div class="cat-info">
-                      <div class="cat-name" id="catPrevName">Emri i kategorisë</div>
+                      <div class="cat-name" id="catPrevName">Emri i koleksionit</div>
                       <div class="cat-count">0 lule</div>
                     </div>
                   </div>
@@ -760,21 +772,21 @@ textarea.form-control{resize:vertical;min-height:75px;}
               </div>
               <div style="margin-top:1rem;">
                 <button class="btn btn-primary" onclick="saveCat()">
-                  <i class="fas fa-plus"></i> Shto Kategorinë
+                  <i class="fas fa-plus"></i> Shto Koleksionin
                 </button>
               </div>
             </div>
           </div>
           <div class="card" style="margin-bottom:0;">
             <div class="card-header">
-              <div class="card-title"><i class="fas fa-list"></i> Kategorite Ekzistuese</div>
-              <span class="badge badge-green" id="catCount">0 kategori</span>
+              <div class="card-title"><i class="fas fa-layer-group"></i> Koleksionet Ekzistuese</div>
+              <span class="badge badge-green" id="catCount">0 koleksione</span>
             </div>
             <div class="card-body" id="catsList">
               <div class="empty-state">
-                <i class="fas fa-tags"></i>
-                <h3>Nuk ka kategori</h3>
-                <p>Shto kategorinë e parë.</p>
+                <i class="fas fa-layer-group"></i>
+                <h3>Nuk ka koleksione</h3>
+                <p>Shto koleksionin e parë.</p>
               </div>
             </div>
           </div>
@@ -933,12 +945,6 @@ textarea.form-control{resize:vertical;min-height:75px;}
           <input type="number" class="form-control" id="fDiscountPrice" placeholder="p.sh. 900" min="0"/>
         </div>
         <div class="form-group form-full">
-          <label>Rastet (p.sh. Ditelindje, Dashuri)</label>
-          <div id="fOccWrapper" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:5px;">
-            <!-- Dinamikisht nga JS -->
-          </div>
-        </div>
-        <div class="form-group form-full">
           <label>Përshkrimi</label>
           <textarea class="form-control" id="fDesc" placeholder="Përshkruani lulen..."></textarea>
         </div>
@@ -975,16 +981,28 @@ textarea.form-control{resize:vertical;min-height:75px;}
   </div>
 </div>
 
-<!-- MODAL: Ndrysho Kategori -->
+<!-- MODAL: Ndrysho Koleksion -->
 <div class="modal-overlay" id="modalEditCat">
   <div class="modal" style="max-width:420px;">
     <div class="modal-header">
-      <div class="modal-title">Ndrysho Kategorinë</div>
+      <div class="modal-title">Ndrysho Koleksionin</div>
       <button class="modal-close" onclick="closeModal('modalEditCat')"><i class="fas fa-times"></i></button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="ecId"/>
       <div style="display:flex;flex-direction:column;gap:.8rem;">
+        <div class="form-group">
+          <label>Foto e Koleksionit</label>
+          <div style="display:flex; gap:10px; align-items: flex-start;">
+            <div style="flex:1;">
+              <input type="text" class="form-control" id="ecImg" placeholder="URL e fotos..." oninput="previewEditCatImg()"/>
+              <input type="file" class="form-control" accept="image/*" onchange="handleFileUpload(this, 'ecImg', 'ecImgPreview')" style="margin-top:5px; font-size:12px; padding:4px;"/>
+            </div>
+            <div class="img-preview" id="ecImgPreview" style="width:100px; height:100px; margin-top:0;">
+              <i class="fas fa-image"></i><span>Foto</span>
+            </div>
+          </div>
+        </div>
         <div class="form-group">
           <label>Emri <span>*</span></label>
           <input type="text" class="form-control" id="ecName"/>
@@ -1034,7 +1052,6 @@ const WORKER_URL  = '/api'; // Tashmë përdorim Pages Functions (si Don Camillo
 
 let _flowers    = [];
 let _categories = [];
-let _occasions  = [];
 let _blog       = [];
 let _orders     = [];
 
@@ -1149,7 +1166,7 @@ function doLogout() {
    NAVIGATION
 ═══════════════════════════════════════════════ */
 var PAGE_TITLES = {
-  dashboard:'Pasqyra', flowers:'Lulet', categories:'Kategorite', blog:'Blogu', orders:'Porositë & Klientët', settings:'Cilësimet'
+  dashboard:'Pasqyra', flowers:'Lulet', categories:'Koleksionet', blog:'Blogu', orders:'Porositë & Klientët', settings:'Cilësimet'
 };
 
 function goPage(id) {
@@ -1323,63 +1340,6 @@ function renderOrders() {
   </tr>`).join('');
 }
 
-function renderOccasions() {
-  var list = document.getElementById('occsList');
-  if (!list) return;
-  document.getElementById('occCount').textContent = _occasions.length + ' raste';
-  if (!_occasions.length) {
-    list.innerHTML = '<div class="empty-state"><i class="fas fa-gift"></i><h3>Nuk ka raste</h3><p>Shto rastin e parë.</p></div>';
-    return;
-  }
-  list.innerHTML = _occasions.map(function(o) {
-    return '<div class="cat-card">'
-      + '<div class="cat-info">'
-      + '<strong>' + esc(o.name) + '</strong>'
-      + '</div>'
-      + '<button class="btn btn-danger btn-sm btn-icon" onclick="deleteOcc(\'' + o.id + '\')"><i class="fas fa-trash"></i></button>'
-      + '</div>';
-  }).join('');
-}
-
-async function saveOcc() {
-  var name = document.getElementById('occName').value.trim();
-  if (!name) { toast('Emri i rastit është i detyrueshëm!', 'err'); return; }
-  
-  const res = await apiFetch('/occasions', {
-    method: 'POST',
-    body: JSON.stringify({ name })
-  });
-
-  if (res) {
-    document.getElementById('occName').value = '';
-    loadAll();
-    toast('✅ Rasti u shtua!');
-  }
-}
-
-async function deleteOcc(id) {
-  if (!confirm('A jeni të sigurt që dëshironi ta fshini këtë rast?')) return;
-  var cleanId = String(id).replace('id_', '');
-  const res = await apiFetch(`/occasions?id=eq.${cleanId}`, { method: 'DELETE' });
-  if (res) {
-    loadAll();
-    toast('🗑️ Rasti u fshi!');
-  }
-}
-
-function populateOccCheckboxes(selectedOccs) {
-  var wrapper = document.getElementById('fOccWrapper');
-  if (!wrapper) return;
-  if (!_occasions.length) {
-    wrapper.innerHTML = '<p class="text-xs text-gray-500 italic">Shto raste te faqja "Rastet" qe te mund t\'i zgjedhesh ketu.</p>';
-    return;
-  }
-  wrapper.innerHTML = _occasions.map(function(o) {
-    var checked = (selectedOccs || []).includes(o.name) ? 'checked' : '';
-    return '<label class="flex items-center gap-1 text-sm"><input type="checkbox" name="fOcc" value="' + esc(o.name) + '" ' + checked + '> ' + esc(o.name) + '</label>';
-  }).join('');
-}
-
 /* ═══════════════════════════════════════════════
    DASHBOARD
 ═══════════════════════════════════════════════ */
@@ -1478,7 +1438,6 @@ function openAddFlower() {
   document.getElementById('fCareTemp').value = '';
   document.getElementById('fImg').value   = '';
   document.getElementById('fAvail').checked = true;
-  populateOccCheckboxes([]);
   updateAvailLbl();
   document.getElementById('fImgPreview').innerHTML = '<i class="fas fa-image"></i><span>Pamja e fotos</span>';
   populateCatSelect('');
@@ -1501,8 +1460,6 @@ function openEditFlower(id) {
   document.getElementById('fImg').value   = f.img_url || '';
   document.getElementById('fAvail').checked = f.available;
   
-  populateOccCheckboxes(f.occasions || []);
-
   updateAvailLbl();
   populateCatSelect(f.category);
   previewFImg();
@@ -1524,11 +1481,6 @@ async function saveFlower() {
   var img_url = document.getElementById('fImg').value.trim();
   var available = document.getElementById('fAvail').checked;
   
-  var occasions = [];
-  document.querySelectorAll('input[name="fOcc"]:checked').forEach(c => {
-    occasions.push(c.value);
-  });
-
   if (!name) { toast('Emri është i detyrueshëm!', 'err'); return; }
   if (!category) { toast('Zgjidhni kategorinë!', 'err'); return; }
 
@@ -1543,8 +1495,7 @@ async function saveFlower() {
     care_water,
     care_temp,
     img_url, 
-    available, 
-    occasions 
+    available
   };
   
   let res;
@@ -1618,15 +1569,15 @@ function renderCategories() {
   var list = document.getElementById('catsList');
   var cnt  = document.getElementById('catCount');
   if (!list) return;
-  cnt.textContent = _categories.length + ' kategori';
+  cnt.textContent = _categories.length + ' koleksione';
   if (!_categories.length) {
-    list.innerHTML = '<div class="empty-state"><i class="fas fa-tags"></i><h3>Nuk ka kategori</h3><p>Shto kategorinë e parë.</p></div>';
+    list.innerHTML = '<div class="empty-state"><i class="fas fa-layer-group"></i><h3>Nuk ka koleksione</h3><p>Shto koleksionin e parë.</p></div>';
     return;
   }
   list.innerHTML = _categories.map(function(c){
     var count = _flowers.filter(function(f){ return f.category === c.name; }).length;
     return '<div class="cat-card">'
-      + '<div class="cat-emoji" style="background:' + c.color + '22;">' + c.emoji + '</div>'
+      + (c.img_url ? '<img src="' + esc(c.img_url) + '" style="width:50px;height:50px;object-fit:cover;border-radius:4px;">' : '<div class="cat-emoji" style="background:' + c.color + '22;">' + c.emoji + '</div>')
       + '<div class="cat-info"><div class="cat-name">' + esc(c.name) + '</div><div class="cat-count">' + count + ' lule</div></div>'
       + '<div style="display:flex;gap:.35rem;">'
         + '<button class="btn btn-warn btn-sm btn-icon" onclick="openEditCat(\'' + c.id + '\')"><i class="fas fa-pen"></i></button>'
@@ -1635,24 +1586,47 @@ function renderCategories() {
   }).join('');
 }
 
+function previewCatImg() {
+  var url = document.getElementById('catImg').value.trim();
+  var prev = document.getElementById('catImgPreview');
+  if (url) {
+    prev.innerHTML = '<img src="' + esc(url) + '" style="width:100%;height:100%;object-fit:cover;">';
+  } else {
+    prev.innerHTML = '<i class="fas fa-image"></i><span>Foto</span>';
+  }
+}
+
+function previewEditCatImg() {
+  var url = document.getElementById('ecImg').value.trim();
+  var prev = document.getElementById('ecImgPreview');
+  if (url) {
+    prev.innerHTML = '<img src="' + esc(url) + '" style="width:100%;height:100%;object-fit:cover;">';
+  } else {
+    prev.innerHTML = '<i class="fas fa-image"></i><span>Foto</span>';
+  }
+}
+
 async function saveCat() {
   var name  = document.getElementById('catName').value.trim();
   var emoji = document.getElementById('catEmoji').value.trim() || '🌸';
   var color = document.getElementById('catColor').value;
-  if (!name) { toast('Emri i kategorisë është i detyrueshëm!', 'err'); return; }
+  var img_url = document.getElementById('catImg').value.trim();
+  if (!name) { toast('Emri i koleksionit është i detyrueshëm!', 'err'); return; }
   
   const res = await apiFetch('/categories', {
     method: 'POST',
-    body: JSON.stringify({ name, emoji, color })
+    body: JSON.stringify({ name, emoji, color, img_url })
   });
 
   if (res) {
     document.getElementById('catName').value  = '';
     document.getElementById('catEmoji').value = '🌸';
     document.getElementById('catColor').value = '#2d6a35';
+    document.getElementById('catImg').value = '';
+    document.getElementById('catImgPreview').innerHTML = '<i class="fas fa-image"></i><span>Foto</span>';
     updateCatPreview();
     loadAll();
-    toast('✅ Kategoria u shtua!');
+    toast('✅ Koleksioni u shtua!');
   }
 }
 
@@ -1668,6 +1642,8 @@ function openEditCat(id) {
   document.getElementById('ecName').value  = c.name;
   document.getElementById('ecEmoji').value = c.emoji;
   document.getElementById('ecColor').value = c.color;
+  document.getElementById('ecImg').value = c.img_url || '';
+  previewEditCatImg();
   openModal('modalEditCat');
 }
 
@@ -1676,18 +1652,19 @@ async function updateCat() {
   var name  = document.getElementById('ecName').value.trim();
   var emoji = document.getElementById('ecEmoji').value.trim() || '🌸';
   var color = document.getElementById('ecColor').value;
+  var img_url = document.getElementById('ecImg').value.trim();
   if (!name) { toast('Emri është i detyrueshëm!', 'err'); return; }
   
   var cleanId = String(id).replace('id_', '');
   const res = await apiFetch(`/categories?id=eq.${cleanId}`, {
     method: 'PUT',
-    body: JSON.stringify({ name, emoji, color })
+    body: JSON.stringify({ name, emoji, color, img_url })
   });
 
   if (res) {
     closeModal('modalEditCat');
     loadAll();
-    toast('✅ Kategoria u ndryshua!');
+    toast('✅ Koleksioni u ndryshua!');
   }
 }
 
@@ -1696,22 +1673,22 @@ function confirmDeleteCat(id) {
   if (!c) return;
   var count = _flowers.filter(function(f){ return f.category === c.name; }).length;
   document.getElementById('confirmMsg').textContent = count > 0
-    ? '"' + c.name + '" ka ' + count + ' lule. Nëse e fshini, lulet do të mbeten pa kategori.'
-    : 'A jeni të sigurt që dëshironi të fshini kategorinë "' + c.name + '"?';
+    ? '"' + c.name + '" ka ' + count + ' lule. Nëse e fshini, lulet do të mbeten pa koleksion.'
+    : 'A jeni të sigurt që dëshironi të fshini koleksionin "' + c.name + '"?';
   document.getElementById('confirmBtn').onclick = async function(){
     var cleanId = String(id).replace('id_', '');
     const res = await apiFetch(`/categories?id=eq.${cleanId}`, { method: 'DELETE' });
     if (res) {
       closeModal('modalConfirm');
       loadAll();
-      toast('🗑️ Kategoria u fshi!', 'warn');
+      toast('🗑️ Koleksioni u fshi!', 'warn');
     }
   };
   openModal('modalConfirm');
 }
 
 function updateCatPreview() {
-  var name  = document.getElementById('catName').value || 'Emri i kategorisë';
+  var name  = document.getElementById('catName').value || 'Emri i koleksionit';
   var emoji = document.getElementById('catEmoji').value || '🌸';
   var color = document.getElementById('catColor').value;
   document.getElementById('catPrevName').textContent  = name;

@@ -535,7 +535,7 @@
       border-radius: 2px;
     }
     .pc-badge-gold { background: var(--gold); color: var(--ink); }
-    .pc-badge-out  { background: rgba(13,31,20,.45); color: rgba(255,255,255,.6); }
+    .pc-badge-out  { background: #dc2626; color: #ffffff; font-weight: 800; } /* Ngjyrë e kuqe për S'ka gjendje */
 
     .pc-body { padding: 1.1rem; }
 
@@ -1896,13 +1896,7 @@ async function loadCatalog(){
       ...p,
       imageUrl:     p.img_url || p.image_url || p.imageUrl || p.image || '',
       discountPrice:p.discount_price ?? null,
-      available:    p.available !== false,
-      care_advice:  p.care_advice || '',
-      care:         {
-        light: p.care_light || (p.care_advice ? p.care_advice : 'E mesme'),
-        water: p.care_water || (p.care_advice ? '' : '2x javë'),
-        temp:  p.care_temp  || (p.care_advice ? '' : '15–28°C')
-      }
+      available:    p.available !== false
     }));
   } catch(e){ console.warn('loadCatalog error:', e); }
 
@@ -1972,12 +1966,21 @@ function renderProducts(reset){
     return;
   }
 
-  const html = slice.map(p=>{
+    const html = slice.map(p=>{
     const price = Number(p.price||0);
     const dp    = p.discountPrice;
     const avail = p.available!==false;
-    const badge = !avail ? `<span class="pc-badge pc-badge-out">S'ka gjendje</span>`
-                 : (p.badge ? `<span class="pc-badge${p.badge.toLowerCase().includes('premium')||p.badge.toLowerCase().includes('ulje')?' pc-badge-gold':''}">${esc(p.badge)}</span>` : '');
+    
+    let badge = '';
+    if(!avail) {
+      badge = `<span class="pc-badge pc-badge-out">S'ka gjendje</span>`;
+    } else if(dp != null && price > 0) {
+      const perc = Math.round(((price - dp) / price) * 100);
+      badge = `<span class="pc-badge pc-badge-gold">-${perc}%</span>`;
+    } else if(p.badge) {
+      badge = `<span class="pc-badge${p.badge.toLowerCase().includes('premium')?' pc-badge-gold':''}">${esc(p.badge)}</span>`;
+    }
+
     return `
             <div class="pc" onclick="openQV('${esc(p.id)}')">
               <div class="pc-img">
@@ -2027,10 +2030,11 @@ function openQV(id){
   $('qvTitle').textContent = p.name||'';
   $('qvDesc').textContent  = p.description || 'Bimë premium e zgjedhur me kujdes — për freski, shëndet dhe elegancë.';
   $('qvPrice').innerHTML   = dp!=null ? `${dp} L <span style="font-size:1rem;text-decoration:line-through;color:rgba(255,255,255,.3)">${price} L</span>` : `${price} L`;
-  $('qvLight').textContent  = care.light;
-  $('qvWater').textContent  = care.water;
+  $('qvLight').textContent  = p.care_light || 'E mesme';
+  $('qvWater').textContent  = p.care_water || '2x javë';
   $('qvCareLabel').textContent = 'Temp';
-  $('qvTemp').textContent   = care.temp;
+  $('qvTemp').textContent   = p.care_temp || '15–28°C';
+  $('qvCareNote').textContent = p.care_advice || '';
 
   const msg = encodeURIComponent(`Përshëndetje! Jam i interesuar për: ${p.name} — ${dp??price} L`);
   $('qvWA').href = `https://wa.me/355686648467?text=${msg}`;

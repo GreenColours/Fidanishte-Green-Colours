@@ -972,6 +972,16 @@
       object-fit: contain; object-position: center;
       display: block; background: #fff;
     }
+    @media (max-width: 640px) {
+      .qv-img-wrap img {
+        height: auto !important;
+        min-height: unset !important;
+        max-height: none !important;
+        aspect-ratio: 1 / 1;
+        object-fit: contain !important;
+        background: #fff;
+      }
+    }
     .qv-nav {
       position: absolute; top: 50%; transform: translateY(-50%);
       width: 36px; height: 36px;
@@ -1232,8 +1242,8 @@
         grid-template-columns: 1fr;
         display: block; /* Për siguri në mobile */
       }
-      .qv-img-wrap { max-height: 35vh; }
-      .qv-img-wrap img { min-height: 200px; max-height: 35vh; object-fit: cover; }
+      .qv-img-wrap { height: auto; }
+      .qv-img-wrap img { min-height: unset; max-height: unset; height: auto; aspect-ratio: 1/1; object-fit: contain; object-position: center; background: #fff; }
       .qv-body { padding: 1.2rem; overflow: visible; max-height: none; }
       .qv-title { font-size: 1.4rem; }
       .qv-care-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .4rem; }
@@ -1327,7 +1337,7 @@
       .nav-links { display: none; }
       .nav-burger { display: flex; }
       #qvModal .modal-box { grid-template-columns: 1fr; }
-      .qv-img-wrap img { min-height: 240px; }
+      .qv-img-wrap img { min-height: unset; height: auto; aspect-ratio: 1/1; object-fit: contain; background: #fff; }
       .testi-track { grid-template-columns: 1fr; }
       .gallery-mosaic {
         grid-template-columns: 1fr 1fr;

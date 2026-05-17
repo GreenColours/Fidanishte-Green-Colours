@@ -107,7 +107,7 @@
     }
     .rn-hero-bg {
       position: absolute; inset: 0;
-      background: url('https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=1800&q=85') center 60% / cover no-repeat;
+      background: var(--forest) center 60% / cover no-repeat;
     }
     .rn-hero-overlay {
       position: absolute; inset: 0;
@@ -528,8 +528,10 @@
   <div class="story-grid">
     <div class="story-img-wrap reveal">
       <img class="story-img"
-           src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=900&q=85"
-           alt="Fidanishtja jonë" loading="lazy">
+           src="assets/about-placeholder.jpg"
+           alt="Fidanishtja"
+           loading="lazy"
+           onerror="this.style.display='none'">
       <div class="story-img-accent"></div>
       <div class="story-img-accent2"></div>
     </div>

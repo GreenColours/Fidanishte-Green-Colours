@@ -1229,13 +1229,15 @@
         border-radius: 0; max-height: 100vh;
         overflow-y: auto; margin: 0;
         grid-template-columns: 1fr;
+        display: block; /* Për siguri në mobile */
       }
-      .qv-img-wrap { max-height: 40vh; }
-      .qv-img-wrap img { min-height: 200px; max-height: 40vh; }
-      .qv-body { padding: 1.2rem; }
+      .qv-img-wrap { max-height: 35vh; }
+      .qv-img-wrap img { min-height: 200px; max-height: 35vh; object-fit: cover; }
+      .qv-body { padding: 1.2rem; overflow: visible; max-height: none; }
       .qv-title { font-size: 1.4rem; }
-      .qv-care { grid-template-columns: repeat(3, 1fr); gap: .5rem; }
-      .qv-care-item { padding: .6rem .4rem; }
+      .qv-care-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .4rem; }
+      .qv-care-item { padding: .4rem .2rem; }
+      .qv-care-val { font-size: .68rem; word-break: break-word; }
       .qv-btns { flex-direction: column; gap: .6rem; }
       .qv-btns a, .qv-btns button { width: 100%; justify-content: center; }
       .qv-nav { display: none; }

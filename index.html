@@ -451,43 +451,56 @@
       border-radius: 8px;
     }
 
-    /* ── Categories Modal ── */
-    #catModal .modal-box {
-      max-width: 600px;
-      background: var(--parchment);
+    /* ── Dropdown Categories (Menu Style) ── */
+    .cat-dropdown-wrap {
+      position: relative;
+      width: 100%;
+      margin-top: 1.5rem;
+      background: #fff;
+      border: 1px solid #eee;
     }
-    .cat-modal-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 1rem;
-      padding: 1rem 0;
-    }
-    .cat-modal-item {
-      background: var(--white);
-      border: 1px solid rgba(58,107,70,0.1);
-      border-radius: 12px;
-      padding: 1rem;
-      text-align: center;
+    .cat-dropdown-btn {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      background: #b1945a; /* Ngjyra gold si në foto */
+      color: #fff;
+      padding: .8rem 1.2rem;
+      border: none;
       cursor: pointer;
-      transition: all 0.3s var(--ease);
+      font-family: var(--sans);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      font-size: .9rem;
     }
-    .cat-modal-item:hover {
-      transform: translateY(-3px);
-      border-color: var(--moss);
-      box-shadow: 0 10px 20px rgba(13,31,20,0.08);
+    .cat-dropdown-btn span { margin-right: 10px; }
+    .cat-dropdown-btn i { font-size: .8rem; transition: transform .3s; }
+    .cat-dropdown-wrap.open .cat-dropdown-btn i { transform: rotate(180deg); }
+
+    .cat-list {
+      display: none;
+      flex-direction: column;
+      background: #fff;
     }
-    .cat-modal-img {
-      width: 60px; height: 60px;
-      border-radius: 50%;
-      margin: 0 auto .8rem;
-      overflow: hidden;
-      background: rgba(58,107,70,0.05);
-      display: flex; align-items: center; justify-content: center;
+    .cat-dropdown-wrap.open .cat-list { display: flex; }
+
+    .cat-item {
+      padding: 1.1rem 1.5rem;
+      border-bottom: 1px solid #f2f2f2;
+      color: #555;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background .2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .cat-modal-img img { width: 100%; height: 100%; object-fit: cover; }
-    .cat-modal-emoji { font-size: 2rem; }
-    .cat-modal-name { font-size: .85rem; font-weight: 600; color: var(--forest); }
-    .cat-modal-count { font-size: .7rem; color: var(--moss); opacity: 0.7; margin-top: 4px; }
+    .cat-item:last-child { border-bottom: none; }
+    .cat-item:hover { background: #f9f9f9; color: var(--forest); }
+    .cat-item.active { font-weight: 600; color: var(--forest); background: #f5f7f5; }
+    .cat-item-count { font-size: .8rem; opacity: .5; }
 
     /* Product grid */
     #productGrid {
@@ -1463,23 +1476,18 @@
       <i class="fa-solid fa-magnifying-glass"></i>
       <input id="searchInput" type="text" placeholder="Kërko bimë ose lule…" />
     </div>
-    <div class="filter-pills" id="filterPills">
-      <button class="pill active" data-filter="all">Të gjitha</button>
+    <div class="cat-dropdown-wrap" id="catDropdown">
+      <button class="cat-dropdown-btn" onclick="toggleCatMenu()">
+        <span>KATEGORITË</span>
+        <i class="fa-solid fa-caret-down"></i>
+      </button>
+      <div class="cat-list" id="catList">
+        <!-- Dinamikisht nga JS -->
+      </div>
     </div>
   </div>
 
   <div id="productGrid"></div>
-
-  <!-- MODAL: Kategoritë -->
-  <div class="modal" id="catModal">
-    <div class="modal-box">
-      <button class="modal-close" onclick="closeModal('catModal')"><i class="fa-solid fa-xmark"></i></button>
-      <div style="padding: 1.5rem;">
-        <h3 style="font-family: var(--serif); color: var(--forest); margin-bottom: 1rem;">Koleksionet tona</h3>
-        <div class="cat-modal-grid" id="catModalGrid"></div>
-      </div>
-    </div>
-  </div>
 
   <div id="loadMoreWrap" style="display:none;justify-content:center;margin-top:2.5rem;">
     <button id="loadMoreBtn" class="btn-outline-dark">Shiko më shumë</button>
@@ -1916,62 +1924,48 @@ function setGroupFilter(gid){
     }
   }
   
-  // 3. Update vizual i butonave
-  const btnAll = document.querySelector('.pill[data-filter="all"]');
-  const btnCats = document.getElementById('btnOpenCats');
-  
-  if(gid === 'all') {
-    if(btnAll) btnAll.classList.add('active');
-    if(btnCats) {
-      btnCats.classList.remove('active');
-      btnCats.innerHTML = '<span class="pill-emoji">✨</span><span>Kategoritë</span>';
-    }
-  } else {
-    if(btnAll) btnAll.classList.remove('active');
-    if(btnCats) {
-      btnCats.classList.add('active');
-      btnCats.innerHTML = `<span class="pill-emoji">✨</span><span>${gid}</span>`;
-    }
-  }
+  // 3. Update vizual i menysë
+  document.getElementById('catDropdown').classList.remove('open');
+  document.querySelectorAll('.cat-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.filter === gid);
+  });
+}
+
+function toggleCatMenu() {
+  document.getElementById('catDropdown').classList.toggle('open');
 }
 
 function renderFilterPills(){
-  const wrap = $('filterPills');
+  const wrap = $('catList');
   if(!wrap) return;
   const allCount = PRODUCTS.length;
   
-  wrap.innerHTML = `
-    <button class="pill active" data-filter="all" onclick="setGroupFilter('all')">
-      <span class="pill-emoji">🌿</span>
+  let html = `
+    <div class="cat-item active" data-filter="all" onclick="setGroupFilter('all')">
       <span>Të gjitha</span>
-      <span class="pill-count">${allCount}</span>
-    </button>
-    <button class="pill" id="btnOpenCats" onclick="openCatModal()">
-      <span class="pill-emoji">✨</span>
-      <span>Kategoritë</span>
-    </button>
+      <span class="cat-item-count">${allCount}</span>
+    </div>
   `;
-  renderCatModal();
-}
-
-function openCatModal(){
-  openModal('catModal');
-}
-
-function renderCatModal(){
-  const grid = $('catModalGrid');
-  grid.innerHTML = CATEGORIES.map(g => {
+  
+  html += CATEGORIES.map(g => {
     const count = PRODUCTS.filter(p => (p.category||'') === (g.name||'')).length;
     return `
-      <div class="cat-modal-item" onclick="setGroupFilter('${esc(g.name)}'); closeModal('catModal');">
-        <div class="cat-modal-img">
-          ${g.img_url ? `<img src="${esc(g.img_url)}" alt="${esc(g.name)}">` : `<span class="cat-modal-emoji">${g.emoji||'🌸'}</span>`}
-        </div>
-        <div class="cat-modal-name">${esc(g.name)}</div>
-        <div class="cat-modal-count">${count} produkte</div>
+      <div class="cat-item" data-filter="${esc(g.name)}" onclick="setGroupFilter('${esc(g.name)}')">
+        <span>${esc(g.name)}</span>
+        <span class="cat-item-count">${count}</span>
       </div>`;
   }).join('');
+  
+  wrap.innerHTML = html;
 }
+
+// Mbyll menunë nese klikohet jashtë
+document.addEventListener('click', function(e) {
+  const wrap = document.getElementById('catDropdown');
+  if (wrap && !wrap.contains(e.target)) {
+    wrap.classList.remove('open');
+  }
+});
 
 $('searchInput').addEventListener('input', e=>{ _searchQ=e.target.value.toLowerCase(); applyFilters(); });
 

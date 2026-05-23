@@ -1903,14 +1903,20 @@ async function loadCatalog(){
 
 function setGroupFilter(gid){
   _activeGroup = gid;
-  // Scroll nëse jemi lart, por jo nëse klikojmë te pills te produktet
+  
+  // 1. Apliko filtrat
+  applyFilters();
+  
+  // 2. Scroll te produktet
   const prodSec = document.querySelector('#produktet');
-  const rect = prodSec.getBoundingClientRect();
-  if(rect.top < -100 || rect.top > window.innerHeight) {
-    prodSec.scrollIntoView({behavior:'smooth'});
+  if(prodSec) {
+    const rect = prodSec.getBoundingClientRect();
+    if(rect.top < -100 || rect.top > window.innerHeight) {
+      prodSec.scrollIntoView({behavior:'smooth'});
+    }
   }
   
-  setTimeout(applyFilters, 100);
+  // 3. Update vizual i butonave (nëse ka buton për atë kategori)
   document.querySelectorAll('.pill').forEach(p=>{
     p.classList.toggle('active', (p.dataset.filter===gid)||(gid==='all'&&p.dataset.filter==='all'));
   });
@@ -1918,6 +1924,7 @@ function setGroupFilter(gid){
 
 function renderFilterPills(){
   const wrap = $('filterPills');
+  if(!wrap) return;
   const allCount = PRODUCTS.length;
   
   const pills = [

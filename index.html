@@ -451,56 +451,49 @@
       border-radius: 8px;
     }
 
-    /* ── Dropdown Categories (Menu Style) ── */
-    .cat-dropdown-wrap {
-      position: relative;
-      width: 100%;
+    /* ── Filter Pills & Dropdown ── */
+    .filter-pills {
+      display: flex; gap: .8rem; flex-wrap: wrap; align-items: center;
       margin-top: 1.5rem;
-      background: #fff;
-      border: 1px solid #eee;
     }
-    .cat-dropdown-btn {
-      width: 100%;
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      background: #b1945a; /* Ngjyra gold si në foto */
-      color: #fff;
-      padding: .8rem 1.2rem;
-      border: none;
-      cursor: pointer;
-      font-family: var(--sans);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-      font-size: .9rem;
+    .pill {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .5rem 1rem; font-size: .8rem; font-weight: 500;
+      border: 1px solid rgba(58,107,70,.15); border-radius: 99px;
+      color: var(--forest); background: var(--white); cursor: pointer;
+      transition: all .2s; box-shadow: 0 2px 6px rgba(13,31,20,0.03);
     }
-    .cat-dropdown-btn span { margin-right: 10px; }
-    .cat-dropdown-btn i { font-size: .8rem; transition: transform .3s; }
-    .cat-dropdown-wrap.open .cat-dropdown-btn i { transform: rotate(180deg); }
+    .pill:hover, .pill.active {
+      border-color: var(--moss); background: rgba(58,107,70,.06); transform: translateY(-1px);
+    }
+    .pill.active {
+      border-width: 2px; padding: calc(.5rem - 1px) calc(1rem - 1px);
+    }
+    .pill-emoji { font-size: 1.1rem; }
+    .pill-count {
+      font-size: .65rem; color: var(--moss); opacity: 0.7;
+      background: rgba(58,107,70,0.1); padding: 1px 6px; border-radius: 8px;
+    }
 
-    .cat-list {
-      display: none;
-      flex-direction: column;
-      background: #fff;
+    .cat-dropdown {
+      position: relative;
     }
-    .cat-dropdown-wrap.open .cat-list { display: flex; }
-
-    .cat-item {
-      padding: 1.1rem 1.5rem;
-      border-bottom: 1px solid #f2f2f2;
-      color: #555;
-      font-size: 1rem;
-      cursor: pointer;
+    .cat-dropdown-list {
+      display: none; position: absolute; top: calc(100% + 8px); left: 0;
+      min-width: 220px; background: #fff; border: 1px solid #eee;
+      box-shadow: 0 10px 25px rgba(13,31,20,0.1); z-index: 100;
+    }
+    .cat-dropdown.open .cat-dropdown-list { display: block; }
+    
+    .cat-dropdown-item {
+      padding: .8rem 1.2rem; border-bottom: 1px solid #f2f2f2;
+      font-size: .85rem; color: #555; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
       transition: background .2s;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
     }
-    .cat-item:last-child { border-bottom: none; }
-    .cat-item:hover { background: #f9f9f9; color: var(--forest); }
-    .cat-item.active { font-weight: 600; color: var(--forest); background: #f5f7f5; }
-    .cat-item-count { font-size: .8rem; opacity: .5; }
+    .cat-dropdown-item:last-child { border-bottom: none; }
+    .cat-dropdown-item:hover { background: #f9f9f9; color: var(--forest); }
+    .cat-dropdown-item.active { font-weight: 600; color: var(--forest); background: #f5f7f5; }
 
     /* Product grid */
     #productGrid {
@@ -1476,14 +1469,8 @@
       <i class="fa-solid fa-magnifying-glass"></i>
       <input id="searchInput" type="text" placeholder="Kërko bimë ose lule…" />
     </div>
-    <div class="cat-dropdown-wrap" id="catDropdown">
-      <button class="cat-dropdown-btn" onclick="toggleCatMenu()">
-        <span>KATEGORITË</span>
-        <i class="fa-solid fa-caret-down"></i>
-      </button>
-      <div class="cat-list" id="catList">
-        <!-- Dinamikisht nga JS -->
-      </div>
+    <div class="filter-pills" id="filterPills">
+      <!-- Dinamikisht nga JS -->
     </div>
   </div>
 
@@ -1924,37 +1911,56 @@ function setGroupFilter(gid){
     }
   }
   
-  // 3. Update vizual i menysë
-  document.getElementById('catDropdown').classList.remove('open');
-  document.querySelectorAll('.cat-item').forEach(item => {
-    item.classList.toggle('active', item.dataset.filter === gid);
+  // 3. Update vizual
+  const wrap = document.getElementById('catDropdown');
+  if(wrap) wrap.classList.remove('open');
+  
+  document.querySelectorAll('.pill, .cat-dropdown-item').forEach(el => {
+    const filter = el.dataset.filter;
+    el.classList.toggle('active', filter === gid);
   });
 }
 
-function toggleCatMenu() {
-  document.getElementById('catDropdown').classList.toggle('open');
+function toggleCatMenu(e) {
+  if(e) e.stopPropagation();
+  const wrap = document.getElementById('catDropdown');
+  if(wrap) wrap.classList.toggle('open');
 }
 
 function renderFilterPills(){
-  const wrap = $('catList');
+  const wrap = $('filterPills');
   if(!wrap) return;
   const allCount = PRODUCTS.length;
   
   let html = `
-    <div class="cat-item active" data-filter="all" onclick="setGroupFilter('all')">
+    <button class="pill active" data-filter="all" onclick="setGroupFilter('all')">
+      <span class="pill-emoji">🌿</span>
       <span>Të gjitha</span>
-      <span class="cat-item-count">${allCount}</span>
-    </div>
+      <span class="pill-count">${allCount}</span>
+    </button>
+    
+    <div class="cat-dropdown" id="catDropdown">
+      <button class="pill" onclick="toggleCatMenu(event)">
+        <span class="pill-emoji">✨</span>
+        <span>Kategoritë</span>
+        <i class="fa-solid fa-chevron-down" style="font-size:.7rem;margin-left:4px;"></i>
+      </button>
+      <div class="cat-dropdown-list">
   `;
   
   html += CATEGORIES.map(g => {
     const count = PRODUCTS.filter(p => (p.category||'') === (g.name||'')).length;
     return `
-      <div class="cat-item" data-filter="${esc(g.name)}" onclick="setGroupFilter('${esc(g.name)}')">
+      <div class="cat-dropdown-item" data-filter="${esc(g.name)}" onclick="setGroupFilter('${esc(g.name)}')">
         <span>${esc(g.name)}</span>
-        <span class="cat-item-count">${count}</span>
+        <span style="font-size:.75rem;opacity:.5;">${count}</span>
       </div>`;
   }).join('');
+  
+  html += `
+      </div>
+    </div>
+  `;
   
   wrap.innerHTML = html;
 }

@@ -371,59 +371,6 @@
     .sec-title em { font-style: italic; color: var(--moss); }
 
     /* ══════════════════════════════════
-       CATEGORIES (Compact Pills)
-    ══════════════════════════════════ */
-    #categories {
-      padding: 3rem clamp(1.5rem, 5vw, 4rem) 1rem clamp(1.5rem, 5vw, 4rem);
-      background: var(--parchment);
-    }
-    .cat-pill-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .8rem;
-      margin-top: 1.5rem;
-    }
-    .cat-pill {
-      display: flex;
-      align-items: center;
-      gap: .6rem;
-      padding: .6rem 1.2rem;
-      background: var(--white);
-      border: 1px solid rgba(58,107,70,0.1);
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all .3s var(--ease);
-      box-shadow: 0 2px 8px rgba(13,31,20,0.04);
-    }
-    .cat-pill:hover, .cat-pill.active {
-      transform: translateY(-2px);
-      border-color: var(--moss);
-      background: rgba(58,107,70,0.08);
-      box-shadow: 0 4px 12px rgba(13,31,20,0.08);
-    }
-    .cat-pill.active {
-      border-width: 2px;
-      padding: calc(.6rem - 1px) calc(1.2rem - 1px);
-    }
-    .cat-pill-emoji {
-      font-size: 1.2rem;
-    }
-    .cat-pill-name {
-      font-size: .88rem;
-      font-weight: 500;
-      color: var(--forest);
-      letter-spacing: 0.01em;
-    }
-    .cat-pill-count {
-      font-size: .7rem;
-      color: var(--moss);
-      opacity: 0.6;
-      background: rgba(58,107,70,0.08);
-      padding: 2px 8px;
-      border-radius: 10px;
-    }
-
-    /* ══════════════════════════════════
        PRODUCTS
     ══════════════════════════════════ */
     #produktet {
@@ -467,25 +414,41 @@
     #searchInput::placeholder { color: rgba(13,31,20,.35); }
 
     .filter-pills {
-      display: flex; gap: .5rem; flex-wrap: wrap;
+      display: flex; gap: .8rem; flex-wrap: wrap;
     }
     .pill {
-      padding: .38rem 1rem;
-      font-size: .68rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .5rem 1rem;
+      font-size: .8rem;
       font-weight: 500;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      border: 1px solid rgba(58,107,70,.2);
+      border: 1px solid rgba(58,107,70,.15);
       border-radius: 99px;
-      color: rgba(13,31,20,.65);
+      color: var(--forest);
       transition: all .2s;
       cursor: pointer;
-      background: transparent;
+      background: var(--white);
+      box-shadow: 0 2px 6px rgba(13,31,20,0.03);
     }
     .pill:hover, .pill.active {
       border-color: var(--moss);
-      color: var(--forest);
-      background: rgba(58,107,70,.08);
+      background: rgba(58,107,70,.06);
+      transform: translateY(-1px);
+    }
+    .pill.active {
+      border-width: 2px;
+      padding: calc(.5rem - 1px) calc(1rem - 1px);
+      box-shadow: 0 4px 12px rgba(13,31,20,0.08);
+    }
+    .pill-emoji { font-size: 1.1rem; }
+    .pill-count {
+      font-size: .65rem;
+      color: var(--moss);
+      opacity: 0.7;
+      background: rgba(58,107,70,0.1);
+      padding: 1px 6px;
+      border-radius: 8px;
     }
 
     /* Product grid */
@@ -1447,18 +1410,6 @@
   </div>
 </div>
 
-<!-- ══ CATEGORIES ══ -->
-<section id="categories">
-  <div class="sec-head reveal">
-    <div>
-      <span class="sec-tag">Koleksioni</span>
-      <h2 class="sec-title">Shfleto sipas <em>kategorisë</em></h2>
-    </div>
-    <a href="#produktet" class="btn-outline-dark">Shiko të gjitha</a>
-  </div>
-  <div class="cat-pill-grid" id="catGrid"></div>
-</section>
-
 <!-- ══ PRODUCTS ══ -->
 <section id="produktet">
   <div class="sec-head reveal">
@@ -1895,50 +1846,45 @@ async function loadCatalog(){
     }));
   } catch(e){ console.warn('loadCatalog error:', e); }
 
-  renderCategoryCards();
   renderFilterPills();
   applyFilters();
   const n = PRODUCTS.filter(p=>p.available!==false).length;
   $('statVarietete').textContent = n ? n+'+' : '—';
 }
 
-/* ── Category cards ── */
-function renderCategoryCards(){
-  const grid = $('catGrid');
-  const allCount = PRODUCTS.length;
-  const allPill = `
-    <div class="cat-pill active reveal" data-filter="all" onclick="setGroupFilter('all')">
-      <span class="cat-pill-emoji">🌿</span>
-      <span class="cat-pill-name">Të gjitha</span>
-      <span class="cat-pill-count">${allCount}</span>
-    </div>`;
-    
-  grid.innerHTML = allPill + CATEGORIES.map((g,i)=>{
-    const count = PRODUCTS.filter(p=>(p.category||'')===(g.name||'')).length;
-    return `
-      <div class="cat-pill reveal" data-filter="${esc(g.name)}" onclick="setGroupFilter('${esc(g.name)}')">
-        <span class="cat-pill-emoji">${g.emoji||'🌸'}</span>
-        <span class="cat-pill-name">${esc(g.name)}</span>
-        <span class="cat-pill-count">${count}</span>
-      </div>`;
-  }).join('');
-  document.querySelectorAll('.cat-pill.reveal').forEach(el=>ro.observe(el));
-}
-
 function setGroupFilter(gid){
   _activeGroup = gid;
-  document.querySelector('#produktet').scrollIntoView({behavior:'smooth'});
-  setTimeout(applyFilters, 400);
-  document.querySelectorAll('.pill, .cat-pill').forEach(p=>{
+  // Scroll nëse jemi lart, por jo nëse klikojmë te pills te produktet
+  const prodSec = document.querySelector('#produktet');
+  const rect = prodSec.getBoundingClientRect();
+  if(rect.top < -100 || rect.top > window.innerHeight) {
+    prodSec.scrollIntoView({behavior:'smooth'});
+  }
+  
+  setTimeout(applyFilters, 100);
+  document.querySelectorAll('.pill').forEach(p=>{
     p.classList.toggle('active', (p.dataset.filter===gid)||(gid==='all'&&p.dataset.filter==='all'));
   });
 }
 
 function renderFilterPills(){
   const wrap = $('filterPills');
+  const allCount = PRODUCTS.length;
+  
   const pills = [
-    `<button class="pill active" data-filter="all" onclick="setGroupFilter('all')">Të gjitha</button>`,
-    ...CATEGORIES.map(g=>`<button class="pill" data-filter="${esc(g.name)}" onclick="setGroupFilter('${esc(g.name)}')">${esc(g.name)}</button>`)
+    `<button class="pill active" data-filter="all" onclick="setGroupFilter('all')">
+      <span class="pill-emoji">🌿</span>
+      <span>Të gjitha</span>
+      <span class="pill-count">${allCount}</span>
+    </button>`,
+    ...CATEGORIES.map(g => {
+      const count = PRODUCTS.filter(p => (p.category||'') === (g.name||'')).length;
+      return `<button class="pill" data-filter="${esc(g.name)}" onclick="setGroupFilter('${esc(g.name)}')">
+        <span class="pill-emoji">${g.emoji||'🌸'}</span>
+        <span>${esc(g.name)}</span>
+        <span class="pill-count">${count}</span>
+      </button>`;
+    })
   ];
   wrap.innerHTML = pills.join('');
 }

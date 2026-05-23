@@ -451,6 +451,44 @@
       border-radius: 8px;
     }
 
+    /* ── Categories Modal ── */
+    #catModal .modal-box {
+      max-width: 600px;
+      background: var(--parchment);
+    }
+    .cat-modal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 1rem;
+      padding: 1rem 0;
+    }
+    .cat-modal-item {
+      background: var(--white);
+      border: 1px solid rgba(58,107,70,0.1);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s var(--ease);
+    }
+    .cat-modal-item:hover {
+      transform: translateY(-3px);
+      border-color: var(--moss);
+      box-shadow: 0 10px 20px rgba(13,31,20,0.08);
+    }
+    .cat-modal-img {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      margin: 0 auto .8rem;
+      overflow: hidden;
+      background: rgba(58,107,70,0.05);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cat-modal-img img { width: 100%; height: 100%; object-fit: cover; }
+    .cat-modal-emoji { font-size: 2rem; }
+    .cat-modal-name { font-size: .85rem; font-weight: 600; color: var(--forest); }
+    .cat-modal-count { font-size: .7rem; color: var(--moss); opacity: 0.7; margin-top: 4px; }
+
     /* Product grid */
     #productGrid {
       display: grid;
@@ -1432,6 +1470,17 @@
 
   <div id="productGrid"></div>
 
+  <!-- MODAL: Kategoritë -->
+  <div class="modal-overlay" id="catModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('catModal')"><i class="fa-solid fa-xmark"></i></button>
+      <div style="padding: 1.5rem;">
+        <h3 style="font-family: var(--serif); color: var(--forest); margin-bottom: 1rem;">Koleksionet tona</h3>
+        <div class="cat-modal-grid" id="catModalGrid"></div>
+      </div>
+    </div>
+  </div>
+
   <div id="loadMoreWrap" style="display:none;justify-content:center;margin-top:2.5rem;">
     <button id="loadMoreBtn" class="btn-outline-dark">Shiko më shumë</button>
   </div>
@@ -1877,16 +1926,32 @@ function renderFilterPills(){
       <span>Të gjitha</span>
       <span class="pill-count">${allCount}</span>
     </button>`,
-    ...CATEGORIES.map(g => {
-      const count = PRODUCTS.filter(p => (p.category||'') === (g.name||'')).length;
-      return `<button class="pill" data-filter="${esc(g.name)}" onclick="setGroupFilter('${esc(g.name)}')">
-        <span class="pill-emoji">${g.emoji||'🌸'}</span>
-        <span>${esc(g.name)}</span>
-        <span class="pill-count">${count}</span>
-      </button>`;
-    })
+    `<button class="pill" onclick="openCatModal()">
+      <span class="pill-emoji">✨</span>
+      <span>Kategoritë</span>
+    </button>`
   ];
   wrap.innerHTML = pills.join('');
+  renderCatModal();
+}
+
+function openCatModal(){
+  openModal('catModal');
+}
+
+function renderCatModal(){
+  const grid = $('catModalGrid');
+  grid.innerHTML = CATEGORIES.map(g => {
+    const count = PRODUCTS.filter(p => (p.category||'') === (g.name||'')).length;
+    return `
+      <div class="cat-modal-item" onclick="setGroupFilter('${esc(g.name)}'); closeModal('catModal');">
+        <div class="cat-modal-img">
+          ${g.img_url ? `<img src="${esc(g.img_url)}" alt="${esc(g.name)}">` : `<span class="cat-modal-emoji">${g.emoji||'🌸'}</span>`}
+        </div>
+        <div class="cat-modal-name">${esc(g.name)}</div>
+        <div class="cat-modal-count">${count} produkte</div>
+      </div>`;
+  }).join('');
 }
 
 $('searchInput').addEventListener('input', e=>{ _searchQ=e.target.value.toLowerCase(); applyFilters(); });

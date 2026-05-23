@@ -1916,10 +1916,23 @@ function setGroupFilter(gid){
     }
   }
   
-  // 3. Update vizual i butonave (nëse ka buton për atë kategori)
-  document.querySelectorAll('.pill').forEach(p=>{
-    p.classList.toggle('active', (p.dataset.filter===gid)||(gid==='all'&&p.dataset.filter==='all'));
-  });
+  // 3. Update vizual i butonave
+  const btnAll = document.querySelector('.pill[data-filter="all"]');
+  const btnCats = document.getElementById('btnOpenCats');
+  
+  if(gid === 'all') {
+    if(btnAll) btnAll.classList.add('active');
+    if(btnCats) {
+      btnCats.classList.remove('active');
+      btnCats.innerHTML = '<span class="pill-emoji">✨</span><span>Kategoritë</span>';
+    }
+  } else {
+    if(btnAll) btnAll.classList.remove('active');
+    if(btnCats) {
+      btnCats.classList.add('active');
+      btnCats.innerHTML = `<span class="pill-emoji">✨</span><span>${gid}</span>`;
+    }
+  }
 }
 
 function renderFilterPills(){
@@ -1927,18 +1940,17 @@ function renderFilterPills(){
   if(!wrap) return;
   const allCount = PRODUCTS.length;
   
-  const pills = [
-    `<button class="pill active" data-filter="all" onclick="setGroupFilter('all')">
+  wrap.innerHTML = `
+    <button class="pill active" data-filter="all" onclick="setGroupFilter('all')">
       <span class="pill-emoji">🌿</span>
       <span>Të gjitha</span>
       <span class="pill-count">${allCount}</span>
-    </button>`,
-    `<button class="pill" onclick="openCatModal()">
+    </button>
+    <button class="pill" id="btnOpenCats" onclick="openCatModal()">
       <span class="pill-emoji">✨</span>
       <span>Kategoritë</span>
-    </button>`
-  ];
-  wrap.innerHTML = pills.join('');
+    </button>
+  `;
   renderCatModal();
 }
 

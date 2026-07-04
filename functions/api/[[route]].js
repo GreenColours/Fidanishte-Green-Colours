@@ -10,16 +10,46 @@
  * ═══════════════════════════════════════════════════════════
  */
 
-// ── CORS Headers ─────────────────────────────────────────────────────────────
-const CORS = {
-  'Access-Control-Allow-Origin':  '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Token',
-  'Access-Control-Max-Age':       '86400',
-};
+// ── CORS — Domain-i i lejuar ──────────────────────────────────────────────────
+const ALLOWED_ORIGINS = [
+  'https://green-colours.pages.dev',
+  'http://localhost',
+  'http://localhost:8788',
+  'http://127.0.0.1',
+];
+
+function buildCors(request) {
+  const origin = (request.headers.get('Origin') || '').trim();
+  const allowed = ALLOWED_ORIGINS.some(o => origin === o || origin.startsWith(o + ':'));
+  return {
+    'Access-Control-Allow-Origin':  allowed ? origin : ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Token',
+    'Access-Control-Max-Age':       '86400',
+    'Vary': 'Origin',
+  };
+}
+
+// ── Rate Limit Store (in-memory, per isolate) ─────────────────────────────────
+const rateLimitStore = new Map();
+const RL_MAX    = 60;
+const RL_WINDOW = 60_000; // 1 minutë
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  let rl = rateLimitStore.get(ip);
+  if (!rl || now > rl.reset) {
+    rl = { count: 0, reset: now + RL_WINDOW };
+  }
+  rl.count++;
+  rateLimitStore.set(ip, rl);
+  return rl.count <= RL_MAX;
+}
 
 // ── Main Handler ──────────────────────────────────────────────────────────────
 export async function onRequest({ request, env, params }) {
+
+  const CORS = buildCors(request);
 
   // CORS Preflight
   if (request.method === 'OPTIONS') {
@@ -30,9 +60,22 @@ export async function onRequest({ request, env, params }) {
   const route  = (params.route || []).join('/').split('?')[0];
   const method = request.method;
 
-  // ── Rate Limiting (simple IP-based, 60 req/min) ───────────────────────────
-  // More advanced rate limiting can be configured in Cloudflare Dashboard
   const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+
+  // ── Rate Limiting — 60 req/min per IP ────────────────────────────────────
+  if (!checkRateLimit(ip)) {
+    return new Response(
+      JSON.stringify({ error: 'Shumë kërkesa — provoni sërish pas 1 minute' }),
+      {
+        status: 429,
+        headers: {
+          ...CORS,
+          'Content-Type': 'application/json',
+          'Retry-After':  '60',
+        },
+      }
+    );
+  }
 
   // ── Helpers ───────────────────────────────────────────────────────────────
   const isAdmin = () => {
@@ -125,12 +168,12 @@ export async function onRequest({ request, env, params }) {
 
       if (method === 'PUT') {
         const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
-        if (!id) return err('ID mungon');
+        if (!id) return err('ID mungon (PUT)');
         const body = sanitize(await request.json());
         const res  = await sb(`flowers?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(body) });
         if (!res.ok) {
           const errText = await res.text();
-          return err(`Supabase error: ${errText}`, res.status);
+          return err(`Supabase PUT/PATCH error: ${errText}`, res.status);
         }
         const data = await res.json();
         return ok(data);
@@ -138,57 +181,11 @@ export async function onRequest({ request, env, params }) {
 
       if (method === 'DELETE') {
         const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
-        if (!id) return err('ID mungon');
+        if (!id) return err('ID mungon (DELETE)');
         const res = await sb(`flowers?id=eq.${id}`, { method: 'DELETE' });
         if (!res.ok) {
           const errText = await res.text();
-          return err(`Supabase error: ${errText}`, res.status);
-        }
-        return ok({ deleted: true });
-      }
-    }
-
-    // ══════════════════════════════════════════════════════════════════════
-    // /api/blog  — Artikujt e blogut (CRUD)
-    // ══════════════════════════════════════════════════════════════════════
-    if (route === 'blog') {
-
-      if (method === 'GET') {
-        const res  = await sb('blog?select=*&order=created_at.desc');
-        const data = await res.json();
-        return ok(Array.isArray(data) ? data : []);
-      }
-
-      if (!isAdmin()) return err('Unauthorized', 401);
-
-      if (method === 'POST') {
-        const body = sanitize(await request.json());
-        if (!body.title || !body.content) return err('Titulli dhe përmbajtja janë të detyrueshëm');
-        const res  = await sb('blog', { method: 'POST', body: JSON.stringify(body) });
-        const data = await res.json();
-        return ok(data, res.status);
-      }
-
-      if (method === 'PUT') {
-        const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
-        if (!id) return err('ID mungon');
-        const body = sanitize(await request.json());
-        const res  = await sb(`blog?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(body) });
-        if (!res.ok) {
-          const errText = await res.text();
-          return err(`Supabase error: ${errText}`, res.status);
-        }
-        const data = await res.json();
-        return ok(data);
-      }
-
-      if (method === 'DELETE') {
-        const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
-        if (!id) return err('ID mungon');
-        const res = await sb(`blog?id=eq.${id}`, { method: 'DELETE' });
-        if (!res.ok) {
-          const errText = await res.text();
-          return err(`Supabase error: ${errText}`, res.status);
+          return err(`Supabase DELETE error: ${errText}`, res.status);
         }
         return ok({ deleted: true });
       }
@@ -261,6 +258,20 @@ export async function onRequest({ request, env, params }) {
         return ok(data, res.status);
       }
 
+      if (method === 'PUT') {
+        const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
+        if (!id) return err('ID mungon');
+        const body = sanitize(await request.json());
+        if (!body.name) return err('Emri i rastit është i detyrueshëm');
+        const res  = await sb(`occasions?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(body) });
+        if (!res.ok) {
+          const errText = await res.text();
+          return err(`Supabase error: ${errText}`, res.status);
+        }
+        const data = await res.json();
+        return ok(data);
+      }
+
       if (method === 'DELETE') {
         const id = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
         if (!id) return err('ID mungon');
@@ -287,19 +298,24 @@ export async function onRequest({ request, env, params }) {
 
       // POST — klienti dërgon porosi (pa token)
       if (method === 'POST') {
-        const body = await request.json();
-        if (!body.phone || !body.items) return err('Telefoni dhe produktet janë të detyrueshëm');
+        const raw  = await request.json();
+        const body = sanitize(raw);
+        if (!body.phone || !raw.items) return err('Telefoni dhe produktet janë të detyrueshëm');
 
         // Anti-spam: valido numrin e telefonit
         const phone = String(body.phone).replace(/\s/g, '');
         if (!/^[0-9+]{7,15}$/.test(phone)) return err('Numri i telefonit i pavlefshëm');
 
         const order = {
-          phone:  phone,
-          items:  JSON.stringify(body.items),
-          total_amount:  body.total || body.total_amount || 0,
-          status: 'e re',
-          created_at: new Date().toISOString(),
+          phone:        phone,
+          items:        JSON.stringify(raw.items),
+          total_amount: raw.total || raw.total_amount || 0,
+          name:         body.name    || '',
+          email:        body.email   || '',
+          address:      body.address || '',
+          notes:        body.notes   || '',
+          status:       'e re',
+          created_at:   new Date().toISOString(),
         };
         const res  = await sb('orders', { method: 'POST', body: JSON.stringify(order) });
         const data = await res.json();
@@ -309,10 +325,14 @@ export async function onRequest({ request, env, params }) {
       // PUT — admin ndryshon statusin
       if (method === 'PUT') {
         if (!isAdmin()) return err('Unauthorized', 401);
-        const id   = url.searchParams.get('id') || url.searchParams.get('id_eq');
+        const id   = cleanId(url.searchParams.get('id') || url.searchParams.get('id_eq'));
         if (!id) return err('ID mungon');
-        const body = await request.json();
+        const body = sanitize(await request.json());
         const res  = await sb(`orders?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: body.status }) });
+        if (!res.ok) {
+          const errText = await res.text();
+          return err(`Supabase error: ${errText}`, res.status);
+        }
         const data = await res.json();
         return ok(data, res.status);
       }
@@ -332,7 +352,6 @@ export async function onRequest({ request, env, params }) {
       if (!isAdmin()) return err('Unauthorized', 401);
 
       if (method === 'POST') {
-        // Shto cilësi të re
         const body = sanitize(await request.json());
         if (!body.key) return err('Key mungon');
         const res  = await sb('settings', { method: 'POST', body: JSON.stringify(body) });
@@ -341,7 +360,6 @@ export async function onRequest({ request, env, params }) {
       }
 
       if (method === 'PUT') {
-        // Ndrysho vlerën e një çelësi
         const key  = url.searchParams.get('key');
         if (!key) return err('Key mungon');
         const body = sanitize(await request.json());
@@ -361,7 +379,6 @@ export async function onRequest({ request, env, params }) {
       if (method === 'POST') {
         const id = url.searchParams.get('id');
         if (!id) return err('ID mungon');
-        // Increment views me Supabase RPC
         const res = await fetch(`${env.SUPABASE_URL}/rest/v1/rpc/increment_views`, {
           method: 'POST',
           headers: {
@@ -371,6 +388,10 @@ export async function onRequest({ request, env, params }) {
           },
           body: JSON.stringify({ flower_id: id }),
         });
+        if (!res.ok) {
+          const errText = await res.text();
+          return err(`RPC error: ${errText}`, res.status);
+        }
         return ok({ ok: true });
       }
     }
@@ -381,25 +402,33 @@ export async function onRequest({ request, env, params }) {
     if (route === 'storage') {
       if (!isAdmin()) return err('Unauthorized', 401);
 
+      const ALLOWED_TYPES = [
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+        'image/gif',
+        'image/svg+xml',
+      ];
+
       // POST — ngarko foto
       if (method === 'POST') {
         const fileName = url.searchParams.get('name');
         if (!fileName) return err('Emri i skedarit mungon');
 
-        // Valido emrin e skedarit (vetëm alfanumerike, _, -, .)
         if (!/^[a-zA-Z0-9_\-\.]+$/.test(fileName)) {
           return err('Emri i skedarit i pavlefshëm');
         }
 
-        // Merr blob-in nga body
+        const contentType = (request.headers.get('Content-Type') || '').split(';')[0].trim();
+        if (!ALLOWED_TYPES.includes(contentType)) {
+          return err('Lloji i skedarit nuk lejohet. Lejo vetëm: JPEG, PNG, WebP, GIF, SVG', 400);
+        }
+
         const imageBlob = await request.arrayBuffer();
         if (imageBlob.byteLength > 5 * 1024 * 1024) {
           return err('Foto shumë e madhe (max 5MB)');
         }
 
-        const contentType = request.headers.get('Content-Type') || 'image/webp';
-
-        // Upload ne Supabase Storage bucket 'images'
         const res = await sbStorage(`object/images/${fileName}`, {
           method:  'POST',
           headers: { 'Content-Type': contentType, 'x-upsert': 'true' },
@@ -411,7 +440,6 @@ export async function onRequest({ request, env, params }) {
           return err(`Storage error: ${errText}`, res.status);
         }
 
-        // Kthe URL-n publike
         const publicUrl = `${env.SUPABASE_URL}/storage/v1/object/public/images/${fileName}`;
         return ok({ url: publicUrl, name: fileName });
       }
@@ -425,8 +453,50 @@ export async function onRequest({ request, env, params }) {
         }
 
         const res = await sbStorage(`object/images/${fileName}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const errText = await res.text();
+          return err(`Storage delete error: ${errText}`, res.status);
+        }
         return ok({ deleted: true, name: fileName });
       }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // /api/contact  — Formulari i kontaktit (pa auth)
+    // ══════════════════════════════════════════════════════════════════════
+    if (route === 'contact') {
+      if (method !== 'POST') return err('Metoda nuk lejohet', 405);
+
+      const raw  = await request.json();
+
+      // Honeypot — nëse plotësohet, është bot; kthe sukses pa vepruar
+      if (raw.website) return ok({ ok: true });
+
+      const body = sanitize(raw);
+
+      // Validimet
+      if (!body.name    || body.name.length    < 2)  return err('Emri duhet të ketë të paktën 2 karaktere');
+      if (!body.email                               )  return err('Email-i është i detyrueshëm');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) return err('Email-i nuk është i vlefshëm');
+      if (!body.subject || body.subject.length  < 2)  return err('Subjekti është i detyrueshëm');
+      if (!body.message || body.message.length  < 10) return err('Mesazhi duhet të ketë të paktën 10 karaktere');
+
+      const contact = {
+        name:       body.name.substring(0, 120),
+        email:      body.email.substring(0, 254),
+        phone:      (body.phone || '').substring(0, 30),
+        subject:    body.subject.substring(0, 200),
+        message:    body.message.substring(0, 2000),
+        created_at: new Date().toISOString(),
+      };
+
+      const res = await sb('contacts', { method: 'POST', body: JSON.stringify(contact) });
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error('Contact save error:', errText);
+        return err('Dërgimi dështoi. Ju lutemi provoni sërish ose na kontaktoni direkt.', 500);
+      }
+      return ok({ ok: true });
     }
 
     // 404

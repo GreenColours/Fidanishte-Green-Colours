@@ -1,0 +1,39 @@
+/*
+  # Security Headers — Green & Colours
+  # Aplikohen për të gjitha faqet
+
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+/index.html
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/rreth-nesh.html
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/404.html
+  Cache-Control: public, max-age=86400, must-revalidate
+
+/style.css
+  Cache-Control: public, max-age=86400, must-revalidate
+
+/robots.txt
+  Cache-Control: public, max-age=86400
+
+/sitemap.xml
+  Cache-Control: public, max-age=86400
+
+/site.webmanifest
+  Cache-Control: public, max-age=86400
+
+/api/*
+  Cache-Control: no-store, no-cache
+  X-Robots-Tag: noindex
+
+/menaxhim-GC-yzy.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store

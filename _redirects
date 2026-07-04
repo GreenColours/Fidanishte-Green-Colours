@@ -1,2 +1,5 @@
-# Green & Colours — Redirects
-# (bosh — linqet funksionojnë direkt si .html)
+# URL Redirects — Green & Colours
+# Format: /from  /to  status_code
+
+/rreth-nesh     /rreth-nesh.html   301
+/about          /rreth-nesh.html   301

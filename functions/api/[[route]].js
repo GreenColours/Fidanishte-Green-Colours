@@ -12,7 +12,7 @@
 
 // ── CORS — Domain-i i lejuar ──────────────────────────────────────────────────
 const ALLOWED_ORIGINS = [
-  'https://green-colours.pages.dev',
+  'https://fidanishte-green-colours.pages.dev',
   'http://localhost',
   'http://localhost:8788',
   'http://127.0.0.1',

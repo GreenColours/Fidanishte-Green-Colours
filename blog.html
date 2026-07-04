@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — Green & Colours · Këshilla për Bimët</title>
+  <meta name="description" content="Këshilla praktike për kujdesin e bimëve, dekorimin e kopshtit dhe zgjedhjen e luleve të duhura." />
+  <meta name="robots" content="index, follow" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌿%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink:      #0d1f14;
+      --forest:   #1a3520;
+      --pine:     #234b2c;
+      --moss:     #3a6b46;
+      --sage:     #7aab84;
+      --mist:     #c8dece;
+      --cream:    #f8f4ec;
+      --parchment:#f0e9d6;
+      --gold:     #c4963a;
+      --gold-lt:  #e0b85a;
+      --blush:    #deb8a0;
+      --white:    #ffffff;
+      --serif:    'Playfair Display', serif;
+      --sans:     'Outfit', sans-serif;
+      --ease:     cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+    body { font-family:var(--sans); background:var(--cream); color:var(--ink); overflow-x:hidden; }
+    img  { display:block; max-width:100%; }
+    a    { text-decoration:none; color:inherit; }
+
+    ::-webkit-scrollbar { width:4px; }
+    ::-webkit-scrollbar-track { background:var(--cream); }
+    ::-webkit-scrollbar-thumb { background:var(--moss); border-radius:2px; }
+
+    /* ── NAV ── */
+    #nav {
+      position:fixed; top:0; left:0; right:0; z-index:200;
+      height:68px;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 clamp(1.5rem,5vw,4rem);
+      background:rgba(13,31,20,0);
+      transition:background .4s var(--ease), border-color .4s;
+      border-bottom:1px solid transparent;
+    }
+    #nav.stuck {
+      background:rgba(13,31,20,.97);
+      border-bottom-color:rgba(196,150,58,.18);
+      backdrop-filter:blur(20px);
+    }
+    .nav-logo { font-family:var(--serif);font-size:1.15rem;font-weight:500;color:var(--white);display:flex;align-items:center;gap:.4rem; }
+    .nav-logo-dot { width:6px;height:6px;border-radius:50%;background:var(--gold);display:inline-block; }
+    .nav-links { display:flex;align-items:center;gap:2.5rem;list-style:none; }
+    .nav-links a { font-size:.72rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.75);transition:color .2s; }
+    .nav-links a:hover { color:var(--white); }
+    .nav-links a.active { color:var(--gold-lt); }
+    .nav-wa {
+      display:flex;align-items:center;gap:.5rem;padding:.55rem 1.3rem;
+      background:rgba(196,150,58,.15);border:1px solid rgba(196,150,58,.45);
+      color:var(--white) !important;border-radius:2px;font-size:.7rem !important;
+      font-weight:600 !important;letter-spacing:.12em !important;transition:background .25s;
+    }
+    .nav-wa:hover { background:var(--gold) !important; color:var(--ink) !important; }
+    .nav-burger { display:none;flex-direction:column;gap:5px;padding:.4rem;cursor:pointer; }
+    .nav-burger span { display:block;width:22px;height:1.5px;background:rgba(255,255,255,.85);transition:all .3s; }
+
+    #mobileMenu {
+      position:fixed;inset:0;z-index:300;background:var(--ink);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;
+      transform:translateX(100%);transition:transform .38s var(--ease);
+    }
+    #mobileMenu.open { transform:translateX(0); }
+    #mobileMenu a { font-family:var(--serif);font-size:2.2rem;font-weight:400;color:rgba(255,255,255,.85);transition:color .2s; }
+    #mobileMenu a:hover, #mobileMenu a.active { color:var(--gold-lt); }
+    .mm-close { position:absolute;top:1.5rem;right:1.5rem;color:rgba(255,255,255,.5);font-size:1.3rem;background:none;border:none;cursor:pointer; }
+
+    /* ── HERO ── */
+    .blog-hero {
+      position:relative; height:48vh; min-height:340px;
+      display:flex; align-items:center; overflow:hidden;
+    }
+    .blog-hero-bg {
+      position:absolute; inset:0;
+      background:url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1800&q=85') center 55% / cover no-repeat;
+    }
+    .blog-hero-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(13,31,20,.8), rgba(13,31,20,.3)); z-index:1; }
+    .blog-hero-inner {
+      position:relative; z-index:2;
+      padding:80px clamp(1.5rem,5vw,4rem) 0;
+      width:100%; text-align:center;
+    }
+    .breadcrumb { display:flex;align-items:center;gap:.6rem;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:1.4rem; }
+    .breadcrumb a { color:rgba(255,255,255,.4);transition:color .2s; }
+    .breadcrumb a:hover { color:var(--gold-lt); }
+    .breadcrumb-sep { opacity:.3; }
+    .breadcrumb-cur { color:var(--gold-lt); }
+
+    .blog-hero-title { font-family:var(--serif);font-size:clamp(2.8rem,6vw,4.8rem);font-weight:400;line-height:1.05;color:var(--white);margin-bottom:1rem; }
+    .blog-hero-title em { font-style:italic;color:var(--blush); }
+    .blog-hero-sub { font-size:.98rem;font-weight:300;color:rgba(255,255,255,.55);max-width:480px;line-height:1.8; }
+
+    /* ── SHARED ── */
+    .sec-tag { display:block;font-size:.65rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem; }
+    .sec-title { font-family:var(--serif);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:400;line-height:1.15;color:var(--forest); }
+    .sec-title em { font-style:italic;color:var(--moss); }
+
+    .reveal { opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease); }
+    .reveal.in { opacity:1;transform:translateY(0); }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      background:var(--forest);
+      padding:0 clamp(1.5rem,5vw,4rem);
+      display:flex; align-items:center; gap:0;
+      overflow-x:auto;
+      scrollbar-width:none;
+    }
+    .filter-bar::-webkit-scrollbar { display:none; }
+
+    .ftab {
+      padding:1.1rem 1.4rem;
+      font-size:.7rem; font-weight:500;
+      letter-spacing:.14em; text-transform:uppercase;
+      color:rgba(255,255,255,.45);
+      border-bottom:2px solid transparent;
+      background:none; cursor:pointer;
+      white-space:nowrap;
+      transition:color .2s, border-color .2s;
+    }
+    .ftab:hover { color:rgba(255,255,255,.8); }
+    .ftab.active { color:var(--gold-lt); border-bottom-color:var(--gold); }
+
+    /* ── BLOG GRID (horizontal cards — live site style) ── */
+    .blog-main {
+      padding: 0 clamp(1.5rem,5vw,4rem) clamp(4rem,8vw,7rem);
+      background: var(--cream);
+    }
+    .blog-grid-head {
+      display:flex; align-items:baseline; justify-content:space-between;
+      margin-bottom:2rem; flex-wrap:wrap; gap:1rem;
+    }
+    .blog-grid-title { font-family:var(--serif);font-size:1.35rem;font-weight:400;color:rgba(13,31,20,.6); }
+    #articleCount { font-size:.78rem;color:rgba(13,31,20,.35); }
+
+    .blog-grid { display:flex; flex-direction:column; gap:1.4rem; }
+
+    /* Horizontal card */
+    .bc {
+      background:#fff;
+      border-radius:16px;
+      overflow:hidden;
+      display:flex;
+      box-shadow:0 8px 28px rgba(13,31,20,.07);
+      cursor:pointer;
+      transition:transform .3s var(--ease), box-shadow .3s;
+    }
+    .bc:hover { transform:translateY(-4px); box-shadow:0 20px 48px rgba(13,31,20,.13); }
+    .bc:hover .bc-img { transform:scale(1.06); }
+
+    .bc-img-wrap { width:33%; min-width:33%; overflow:hidden; }
+    .bc-img { width:100%;height:100%;min-height:200px;object-fit:cover;display:block;transition:transform .55s var(--ease); }
+
+    .bc-body { padding:2rem 2rem; display:flex; flex-direction:column; justify-content:center; flex:1; }
+    .bc-meta {
+      display:flex; gap:1.2rem;
+      font-size:.7rem; font-weight:700;
+      letter-spacing:.1em; text-transform:uppercase;
+      color:var(--moss); margin-bottom:.9rem;
+    }
+    .bc-meta i { color:var(--moss); margin-right:.35rem; }
+    .bc-title { font-family:var(--serif);font-size:1.4rem;font-weight:700;color:var(--forest);line-height:1.2;margin-bottom:.7rem;transition:color .2s; }
+    .bc:hover .bc-title { color:var(--moss); }
+    .bc-excerpt { font-size:.9rem;font-weight:400;color:#555;line-height:1.75;margin-bottom:1.4rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden; }
+    .bc-btn {
+      display:inline-block;
+      background:var(--forest); color:#fff;
+      padding:.6rem 1.5rem; border-radius:50px;
+      font-size:.82rem; font-weight:700;
+      transition:background .2s; align-self:flex-start;
+    }
+    .bc:hover .bc-btn { background:var(--moss); }
+
+    /* Empty state */
+    .blog-empty { text-align:center; padding:4rem 1rem; }
+    .blog-empty i { font-size:2.2rem;color:rgba(58,107,70,.18);display:block;margin-bottom:1rem; }
+    .blog-empty p { font-size:.9rem;color:rgba(13,31,20,.4); }
+
+    /* ── ARTICLE MODAL (white — live site style) ── */
+    .art-modal {
+      display:none; position:fixed; inset:0; z-index:500;
+      background:rgba(0,0,0,.82);
+      backdrop-filter:blur(12px);
+      align-items:center; justify-content:center;
+      padding:1rem;
+    }
+    .art-modal.open { display:flex; }
+
+    .art-panel {
+      background:#fff;
+      border-radius:24px;
+      width:100%; max-width:800px;
+      display:flex; flex-direction:column;
+      max-height:90vh;
+      position:relative;
+      box-shadow:0 32px 80px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+    .art-header {
+      padding:1.2rem 1.6rem;
+      border-bottom:1px solid #eee;
+      display:flex; justify-content:space-between; align-items:center; gap:1rem;
+      position:sticky; top:0; background:#fff; z-index:10;
+    }
+    .art-title {
+      font-family:var(--serif);
+      font-size:clamp(1.3rem,2.5vw,1.75rem);
+      font-weight:700; color:var(--forest); line-height:1.2;
+    }
+    .art-close {
+      font-size:1.8rem; line-height:1;
+      background:none; border:none; cursor:pointer;
+      color:rgba(13,31,20,.4); padding:0;
+      transition:color .2s;
+    }
+    .art-close:hover { color:var(--forest); }
+
+    .art-body { flex:1; overflow-y:auto; padding:1.8rem 2rem 2rem; }
+
+    .art-meta {
+      display:flex; gap:1.5rem;
+      font-size:.82rem; font-weight:700;
+      color:var(--moss); margin-bottom:1.2rem;
+    }
+    .art-meta i { margin-right:.35rem; }
+    .art-content {
+      font-size:.95rem; font-weight:400;
+      color:#444; line-height:1.9;
+      white-space:pre-wrap; margin-bottom:2rem;
+    }
+    /* Share section */
+    .art-share { border-top:1px solid #eee; padding-top:1.5rem; margin-top:.5rem; }
+    .art-share-label {
+      font-size:.72rem; font-weight:700;
+      letter-spacing:.15em; text-transform:uppercase;
+      color:#999; margin-bottom:1rem;
+    }
+    .art-share-btns { display:flex; gap:.75rem; }
+    .share-btn {
+      width:42px; height:42px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:.95rem; color:#fff; border:none; cursor:pointer;
+      transition:opacity .2s, transform .15s;
+    }
+    .share-btn:hover { opacity:.85; transform:scale(1.08); }
+    .share-fb  { background:#1877F2; }
+    .share-wa  { background:#25D366; }
+    .share-lnk { background:#e5e7eb; color:#555; }
+
+    /* ── NEWSLETTER ── */
+    .newsletter {
+      background:var(--forest);
+      padding:clamp(3.5rem,7vw,6rem) clamp(1.5rem,5vw,4rem);
+      text-align:center;
+    }
+    .newsletter .sec-tag { color:var(--blush); }
+    .newsletter-title { font-family:var(--serif);font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:400;color:var(--white);line-height:1.2;margin-bottom:.8rem;margin-top:.5rem; }
+    .newsletter-title em { font-style:italic;color:var(--blush); }
+    .newsletter p { font-size:.92rem;font-weight:300;color:rgba(255,255,255,.5);margin-bottom:2rem;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.8; }
+    .btn-wa-nl {
+      display:inline-flex;align-items:center;gap:.55rem;
+      padding:.9rem 2.4rem;
+      background:var(--gold);color:var(--ink);
+      font-size:.76rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+      border-radius:2px;transition:background .22s,transform .15s;
+    }
+    .btn-wa-nl:hover { background:var(--gold-lt);transform:translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer { background:rgba(5,14,8,.98);border-top:1px solid rgba(255,255,255,.06);padding:2.5rem clamp(1.5rem,5vw,4rem); }
+    .footer-inner { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem; }
+    .footer-logo { font-family:var(--serif);font-size:1.2rem;color:rgba(255,255,255,.7); }
+    .footer-logo em { color:var(--gold-lt);font-style:italic; }
+    .footer-links { display:flex;gap:2rem;flex-wrap:wrap; }
+    .footer-links a { font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);transition:color .2s; }
+    .footer-links a:hover { color:rgba(255,255,255,.7); }
+    .footer-social { display:flex;gap:1.2rem;margin-top:0.5rem; }
+    .footer-social a { color:rgba(255,255,255,.3); font-size:1.1rem; transition:color .2s; }
+    .footer-social a:hover { color:var(--gold); }
+    .footer-copy { font-size:.72rem;color:rgba(255,255,255,.2); }
+
+    /* ── FAB ── */
+    .fab-wa { position:fixed;bottom:1.6rem;right:1.6rem;z-index:90;width:52px;height:52px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.35rem;box-shadow:0 6px 24px rgba(37,211,102,.35);transition:transform .25s var(--ease); }
+    .fab-wa:hover { transform:scale(1.1); }
+
+
+    /* ══════════════════════════════════
+       MOBILE — 480px & below
+    ══════════════════════════════════ */
+    @media (max-width: 480px) {
+      html, body { overflow-x: hidden; max-width: 100%; }
+
+      /* ── HERO ── */
+      .blog-hero { height: 38vh; min-height: 260px; }
+      .blog-hero-inner { padding: 70px 1.2rem 0; }
+      .blog-hero-title { font-size: 2rem; }
+      .blog-hero-sub { font-size: .86rem; }
+
+      /* ── FILTER TABS ── */
+      .filter-bar { padding: 0 .8rem; gap: 0; }
+      .ftab { padding: .9rem .9rem; font-size: .65rem; letter-spacing: .1em; }
+
+      /* ── ARTICLE CARDS — stack vertically ── */
+      .bc { flex-direction: column; border-radius: 12px; }
+      .bc-img-wrap { width: 100%; min-width: unset; height: 180px; }
+      .bc-body { padding: 1.1rem 1.2rem 1.4rem; }
+      .bc-meta { font-size: .66rem; gap: .8rem; }
+      .bc-title { font-size: 1.15rem; }
+      .bc-excerpt { font-size: .84rem; -webkit-line-clamp: 2; }
+      .bc-btn { padding: .5rem 1.1rem; font-size: .72rem; }
+
+      /* ── BLOG LIST ── */
+      .blog-grid { gap: 1rem; }
+
+      /* ── ARTICLE MODAL — full screen ── */
+      .art-modal { padding: 0; align-items: flex-end; }
+      .art-panel {
+        border-radius: 20px 20px 0 0;
+        max-height: 95vh;
+        width: 100%;
+        margin: 0;
+      }
+      .art-header { padding: 1.2rem 1.2rem 1rem; }
+      .art-title { font-size: 1.15rem; }
+      .art-body { padding: 1rem 1.2rem 2rem; }
+      .art-meta { font-size: .7rem; gap: 1rem; }
+      .art-content { font-size: .88rem; line-height: 1.8; }
+      .art-share-btns { gap: .6rem; }
+      .share-btn { width: 38px; height: 38px; font-size: .85rem; }
+
+      /* ── SEC ── */
+      .sec-title { font-size: 1.5rem; }
+
+      /* ── FOOTER ── */
+      footer { padding: 2rem 1.2rem; }
+      footer > div { flex-direction: column; text-align: center; gap: 1.2rem; align-items: center; }
+      footer > div > div:nth-child(2) { justify-content: center; }
+      .fab-wa { width: 46px; height: 46px; font-size: 1.2rem; }
+    }
+
+    @media(max-width:900px){
+      .featured-post { grid-template-columns:1fr; }
+      .fp-img { min-height:240px; }
+    }
+    @media(max-width:768px){
+      .nav-links { display:none; }
+      .nav-burger { display:flex; }
+    }
+    @media(max-width:600px){
+      .bc { flex-direction:column; }
+      .bc-img-wrap { width:100%; min-width:unset; height:190px; }
+      .art-panel { max-height:100vh; height:100vh; border-radius:0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nav-logo">
+    Green & Colours
+  </a>
+  <ul class="nav-links">
+        <li><a href="index.html">Kryefaqja</a></li>
+        <li><a href="index.html#produktet">Produktet</a></li>
+        <li><a href="rreth-nesh.html">Rreth Nesh</a></li>
+        <li><a href="blog.html" class="active">Blog</a></li>
+        <li><a href="index.html#kontakt">Kontakt</a></li>
+    <li><a href="https://wa.me/355686648467" target="_blank" rel="noopener" class="nav-wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a></li>
+  </ul>
+  <div class="nav-burger" id="burger"><span></span><span></span><span></span></div>
+</nav>
+
+<div id="mobileMenu">
+  <button class="mm-close" id="mmClose"><i class="fa-solid fa-xmark"></i></button>
+  <a href="index.html" onclick="closeMM()">Kryefaqja</a>
+  <a href="index.html#produktet" onclick="closeMM()">Produktet</a>
+  <a href="rreth-nesh.html" onclick="closeMM()">Rreth Nesh</a>
+  <a href="blog.html" class="active" onclick="closeMM()">Blog</a>
+  <a href="index.html#kontakt" onclick="closeMM()">Kontakt</a>
+  <a href="https://wa.me/355686648467" target="_blank" style="color:var(--gold-lt);"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+</div>
+
+<!-- HERO -->
+<section class="blog-hero">
+  <div class="blog-hero-bg"></div>
+  <div class="blog-hero-overlay"></div>
+  <div class="blog-hero-inner">
+    <h1 class="blog-hero-title">
+      Këshilla për<br><em>bimët tuaja</em>
+    </h1>
+    <p class="blog-hero-sub">
+      Udhëzime praktike, ide dekorimi dhe sekrete të fidanishtes — direkt nga specialistët tanë.
+    </p>
+  </div>
+</section>
+
+<!-- FILTER TABS -->
+<div class="filter-bar" id="filterBar">
+  <button class="ftab active" data-cat="all">Të gjitha</button>
+  <button class="ftab" data-cat="kujdes">Kujdesi</button>
+  <button class="ftab" data-cat="kopshti">Kopshti</button>
+  <button class="ftab" data-cat="sezonale">Sezonale</button>
+</div>
+
+
+<!-- GRID -->
+<div class="blog-main">
+
+  <div class="blog-grid" id="blogGrid"></div>
+</div>
+
+<!-- NEWSLETTER -->
+<div class="newsletter">
+  <span class="sec-tag">Qëndro i informuar</span>
+  <h3 class="newsletter-title">Merr të rejat direkt<br><em>në WhatsApp</em></h3>
+  <p>Oferta sezonale, produkte të reja dhe këshilla të freskëta — pa spam, vetëm ato që ia vlen.</p>
+  <a href="https://wa.me/355686648467?text=Dua%20t%27informohem%20p%C3%ABr%20produkte%20t%C3%AB%20reja" target="_blank" rel="noopener" class="btn-wa-nl">
+    <i class="fa-brands fa-whatsapp"></i> Na shkruani
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Green <em>& Colours</em></div>
+    <div class="footer-links">
+      <a href="index.html">Kryefaqja</a>
+      <a href="index.html#produktet">Produktet</a>
+      <a href="rreth-nesh.html">Rreth Nesh</a>
+      <a href="index.html#kontakt">Kontakt</a>
+    </div>
+    <div class="footer-social">
+      <a href="https://www.instagram.com/green_and_colours?igsh=MWt3ZHczOHFkdm85Yg==" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+      <a href="https://maps.app.goo.gl/p1y3431Abfp6fDy26?g_st=ac" target="_blank" rel="noopener"><i class="fa-solid fa-location-dot"></i></a>
+      <a href="https://wa.me/355686648467" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+    </div>
+    <div class="footer-copy">&copy; 2026 Fidanishte Green & Colours</div>
+  </div>
+</footer>
+
+<!-- WhatsApp FAB -->
+<a class="fab-wa" href="https://wa.me/355686648467" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<!-- ARTICLE MODAL -->
+<div class="art-modal" id="artModal">
+  <div class="art-panel">
+    <div class="art-header">
+      <h3 class="art-title" id="artTitle"></h3>
+      <button class="art-close" onclick="closeArt()">&times;</button>
+    </div>
+    <div class="art-body">
+      <div class="art-meta" id="artMeta"></div>
+      <div class="art-content" id="artContent"></div>
+      <div class="art-share">
+        <div class="art-share-label">Shpërndaje këtë artikull</div>
+        <div class="art-share-btns">
+          <button class="share-btn share-fb"  onclick="shareSocial('facebook')"><i class="fa-brands fa-facebook-f"></i></button>
+          <button class="share-btn share-wa"  onclick="shareSocial('whatsapp')"><i class="fa-brands fa-whatsapp"></i></button>
+          <button class="share-btn share-lnk" onclick="shareSocial('copy')" title="Kopjo linkun"><i class="fa-solid fa-link"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── Nav ── */
+  window.addEventListener('scroll',()=>{
+    document.getElementById('nav').classList.toggle('stuck', window.scrollY > 40);
+  },{passive:true});
+
+  /* ── Mobile menu ── */
+  document.getElementById('burger').addEventListener('click',()=> document.getElementById('mobileMenu').classList.add('open'));
+  document.getElementById('mmClose').addEventListener('click',()=> document.getElementById('mobileMenu').classList.remove('open'));
+  document.querySelectorAll('#mobileMenu a').forEach(a=> a.addEventListener('click',()=> document.getElementById('mobileMenu').classList.remove('open')));
+
+  /* ── Reveal ── */
+  const ro = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+  },{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+  /* ── Blog Data — ndrysho këtu për të shtuar artikuj ── */
+  const BLOG_POSTS = [
+    {
+      id: 1,
+      title: 'Si të kujdeseni për Monsterat tuaj',
+      category: 'kujdes',
+      date: '15 Prill 2026',
+      read_time: '4 min',
+      image_url: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=800&q=80',
+      excerpt: 'Monstera Deliciosa është një nga bimët më të dashura dekorative. Ja si të siguroni rritjen e saj optimale.',
+      content: `DRITA: Dritë indirekte e fortë — afër dritares, larg diellit direkt.
+UJITJA: 1-2 herë/javë verës, çdo 10-14 ditë dimrit. Lini tokën të thahet pak midis ujitjeve.
+TOKA: Mirëdrenueshme, e pasur me lëndë organike. Ndërroni tokën çdo 2 vjet.
+PLEHËRIMI: Çdo muaj gjatë pranverës dhe verës.
+
+Këshillë: Fshijini gjethet me leckë të lagur çdo 2 javë për të hequr pluhurin.`
+    },
+    {
+      id: 2,
+      title: 'Kujdesi i fidanëve frutorë në shtëpi',
+      category: 'kopshti',
+      date: '10 Mars 2026',
+      read_time: '6 min',
+      image_url: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80',
+      excerpt: 'Fidanët frutorë mund të rriten edhe në ballkon. Gjithçka fillon me tokën e duhur dhe ujitjen korrekte.',
+      content: `TOKA: E pasur, mirëdrenueshme. Shtoni 20% rërë të trashë për drenazh.
+ENËT: Me vrima drenazhimi, 30-40 cm diametër. Ndërroni çdo 2-3 vjet.
+UJITJA: Çdo 2-3 ditë verës, çdo 7-10 ditë dimrit.
+PLEHËRIMI: Çdo 2 muaj gjatë sezonit aktiv me pleh organik.
+
+Këshillë: Shumica e fidanëve frutorë durojnë klimën shqiptare — mbulosini vetëm nëse priten ngrica.`
+    },
+    {
+      id: 3,
+      title: 'Bimët më të mira për zyrën tuaj',
+      category: 'kujdes',
+      date: '20 Shkurt 2026',
+      read_time: '3 min',
+      image_url: 'https://images.unsplash.com/photo-1459156212016-c812468e2115?w=800&q=80',
+      excerpt: 'Bimët e duhura në zyrë rrisin produktivitetin dhe përmirësojnë cilësinë e ajrit. Zbuloni zgjedhjet tona.',
+      content: `Studimet tregojnë se bimët reduktojnë stresin 37% dhe rrisin produktivitetin 15%.
+
+• SANSEVIERIA — Ujitje minimale, pastron ajrin natën.
+• POTHOS — Rritet shpejt, toleron dritë të ulët, rezistente.
+• ZZ PLANT — Ujitje çdo 2-3 javë. Gjethe të shkëlqyera.
+• KAKTUSE & SUKULENTE — Minimale dhe moderne.
+
+Këshillë: Vendosini bimët afër dritareve dhe pastroni gjethet çdo 2 javë.`
+    },
+    {
+      id: 4,
+      title: 'Si të dekoroni kopshtin për pranverë',
+      category: 'sezonale',
+      date: '15 Janar 2026',
+      read_time: '5 min',
+      image_url: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800&q=80',
+      excerpt: 'Pranvera është koha e duhur për të ndryshuar pamjen e kopshtit. Ide praktike nga ekipi ynë.',
+      content: `LULET E SEZONIT:
+• Tulipanë — ngjyra të ndezura, dhjetëra varietete
+• Narcise — elegante dhe rezistente
+• Zumbulë — aromë mahnitëse rreth hyrjes
+
+SHUMËVJEÇARE: Lavendula, rozmarini dhe sherbeti — kthehen çdo pranverë.
+
+Këshillë: Mbillni me ndryshim 2-3 javësh për lulëzim të vazhduar gjatë gjithë sezonit.`
+    }
+  ];
+
+  const DEFAULT_IMG = 'assets/placeholder.jpg';
+  const esc = s => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  let _all = [];
+  let _active = 'all';
+  let _current = null;
+
+  function getList(){
+    return _active === 'all' ? _all : _all.filter(a=>(a.category||'')===_active);
+  }
+
+  /* ── Render të gjithë artikujt si karta identike ── */
+  function renderGrid(){
+    const grid = document.getElementById('blogGrid');
+    const list = getList();
+    if(!list.length){
+      grid.innerHTML = `<div class="blog-empty"><i class="fa-regular fa-newspaper"></i><p>Nuk ka artikuj në këtë kategori.</p></div>`;
+      return;
+    }
+    grid.innerHTML = list.map((a, idx) => {
+      const img = a.image_url||DEFAULT_IMG;
+      return `
+        <div class="bc" onclick="openArt(${idx})">
+          <div class="bc-img-wrap">
+            <img class="bc-img" src="${esc(img)}" alt="${esc(a.title)}" loading="lazy" onerror="this.style.display='none'">
+          </div>
+          <div class="bc-body">
+            <div class="bc-meta">
+              <span><i class="fa-regular fa-calendar-alt"></i> ${esc(a.date||'')}</span>
+              <span><i class="fa-regular fa-clock"></i> ${esc(a.read_time||'')} lexim</span>
+            </div>
+            <div class="bc-title">${esc(a.title)}</div>
+            <p class="bc-excerpt">${esc(a.excerpt||'')}</p>
+            <span class="bc-btn">Lexo artikullin e plotë</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderAll(){ renderGrid(); }
+
+  /* ── Filter tabs ── */
+  document.querySelectorAll('.ftab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      _active = btn.dataset.cat;
+      renderAll();
+    });
+  });
+
+  /* ── Article modal ── */
+  /* ── Scroll lock iOS/Android ── */
+  let _scrollY = 0;
+  function lockBodyScroll() {
+    _scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = '-' + _scrollY + 'px';
+    document.body.style.width = '100%';
+  }
+  function unlockBodyScroll() {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, _scrollY);
+  }
+
+  function openArt(idx){
+    const a = getList()[idx];
+    if(!a) return;
+    _current = a;
+    document.getElementById('artTitle').textContent = a.title||'';
+    document.getElementById('artMeta').innerHTML =
+      `<span><i class="fa-regular fa-calendar-alt"></i> ${esc(a.date||'')}</span>
+       <span><i class="fa-regular fa-clock"></i> ${esc(a.read_time||'')}</span>`;
+    document.getElementById('artContent').textContent = a.content||'';
+    document.querySelector('.art-body').scrollTop = 0;
+    document.getElementById('artModal').classList.add('open');
+    lockBodyScroll();
+  }
+
+  function closeArt(){
+    document.getElementById('artModal').classList.remove('open');
+    unlockBodyScroll();
+    _current = null;
+  }
+
+  document.getElementById('artModal').addEventListener('click',e=>{
+    if(e.target===document.getElementById('artModal')) closeArt();
+  });
+
+  /* ── Share ── */
+  function shareSocial(platform){
+    if(!_current) return;
+    const url = window.location.href;
+    const text = `Lexoni: ${_current.title}`;
+    if(platform==='facebook'){
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+    } else if(platform==='whatsapp'){
+      window.open(`https://wa.me/?text=${encodeURIComponent(text+' '+url)}`, '_blank');
+    } else if(platform==='copy'){
+      navigator.clipboard.writeText(url).then(()=>alert('Linku u kopjua!'));
+    }
+  }
+
+  /* ── Init ── */
+  _all = BLOG_POSTS;
+  renderAll();
+</script>
+</body>
+</html>

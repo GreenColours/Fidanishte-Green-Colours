@@ -1,0 +1,7 @@
+# URL Redirects — Green & Colours
+# Format: /from  /to  status_code
+
+# SPA-style routes (nëse përdorin /blog pa .html)
+/blog           /blog.html         301
+/rreth-nesh     /rreth-nesh.html   301
+/about          /rreth-nesh.html   301

@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /menaxhim-GC-yzy.html
-Disallow: /api/
-
-Sitemap: https://green-colours.pages.dev/sitemap.xml

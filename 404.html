@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Faqja nuk u gjet — Green & Colours</title>
+  <meta name="description" content="Faqja që kërkuat nuk ekziston. Kthehuni në faqen kryesore të Fidanishte Green & Colours." />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="canonical" href="https://greenandcolours.com/" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌿%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    .pg404 {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--forest);
+      padding: clamp(6rem, 12vw, 10rem) clamp(1.5rem, 5vw, 4rem) 4rem;
+      text-align: center;
+    }
+    .pg404-icon {
+      font-size: clamp(4rem, 12vw, 7rem);
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      opacity: .85;
+    }
+    .pg404-code {
+      font-family: var(--serif);
+      font-size: clamp(5rem, 18vw, 10rem);
+      font-weight: 700;
+      color: rgba(255,255,255,.08);
+      line-height: 1;
+      letter-spacing: -.04em;
+      position: absolute;
+      pointer-events: none;
+      user-select: none;
+    }
+    .pg404-inner { position: relative; }
+    .pg404-tag {
+      display: inline-block;
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .pg404-title {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.25;
+      margin-bottom: 1.2rem;
+    }
+    .pg404-title em { font-style: italic; color: var(--gold-lt); }
+    .pg404-desc {
+      font-size: clamp(.88rem, 2.5vw, 1rem);
+      color: rgba(255,255,255,.5);
+      line-height: 1.8;
+      max-width: 420px;
+      margin: 0 auto 2.5rem;
+    }
+    .pg404-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .9rem 2.2rem;
+      background: var(--gold);
+      color: var(--ink);
+      font-size: .82rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      transition: background .25s, transform .2s;
+      text-decoration: none;
+    }
+    .pg404-btn:hover {
+      background: var(--gold-lt);
+      transform: translateY(-2px);
+    }
+    .pg404-divider {
+      width: 44px; height: 1px;
+      background: var(--gold);
+      margin: 1.4rem auto;
+    }
+  </style>
+</head>
+<body>
+
+<nav id="nav" aria-label="Navigimi kryesor">
+  <a href="index.html" class="nav-logo" aria-label="Green & Colours — Kryefaqja">
+    Green & Colours
+  </a>
+  <ul class="nav-links" role="list">
+    <li><a href="index.html">Kryefaqja</a></li>
+    <li class="has-mega">
+      <a href="index.html#produktet" aria-haspopup="true">Produktet <i class="fa-solid fa-chevron-down mega-caret" aria-hidden="true"></i></a>
+      <div class="mega-menu" role="menu" aria-label="Kategoritë e produkteve">
+        <div class="mega-grid" id="megaGrid"><!-- Dinamikisht nga JS --></div>
+        <div class="mega-footer">
+          <a href="index.html#produktet">Shiko të gjitha produktet <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </li>
+    <li><a href="rreth-nesh.html">Rreth Nesh</a></li>
+    <li><a href="index.html#kontakt">Kontakt</a></li>
+    <li>
+      <a href="https://wa.me/355686648467" target="_blank" rel="noopener" class="nav-wa" aria-label="Na kontaktoni në WhatsApp">
+        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp
+      </a>
+    </li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <button class="nav-search" id="navSearchBtn" aria-label="Kërko produkte"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
+  </div>
+</nav>
+
+<!-- Search Overlay -->
+<div id="searchOverlay" role="dialog" aria-modal="true" aria-label="Kërko produkte">
+  <div class="so-box">
+    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+    <input id="soInput" type="text" placeholder="Kërko bimë, lule, vazo…" autocomplete="off" />
+    <button id="soClose" aria-label="Mbyll kërkimin"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+  </div>
+  <div class="so-hint">Shtyp Enter për të parë rezultatet</div>
+</div>
+
+
+<main class="pg404" id="main-content">
+  <div class="pg404-inner">
+    <div class="pg404-code" aria-hidden="true">404</div>
+    <div class="pg404-icon" aria-hidden="true">
+      <i class="fa-solid fa-seedling"></i>
+    </div>
+    <span class="pg404-tag">Faqja nuk u gjet</span>
+    <h1 class="pg404-title">Kjo faqe <em>nuk ekziston</em></h1>
+    <div class="pg404-divider" aria-hidden="true"></div>
+    <p class="pg404-desc">
+      Faqja që po kërkoni mund të jetë zhvendosur, fshirë ose URL-ja mund të jetë e gabuar.
+      Mos u shqetësoni — kthehuni te fidanishtja jonë!
+    </p>
+    <a href="index.html" class="pg404-btn">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Kthehu në faqen kryesore
+    </a>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Green <em>& Colours</em></div>
+    <div class="footer-links">
+      <a href="index.html#produktet">Produktet</a>
+      <a href="index.html#about">Rreth nesh</a>
+      <a href="index.html#kontakt">Kontakt</a>
+    </div>
+    <div class="footer-copy">&copy; 2026 Fidanishte Green & Colours</div>
+  </div>
+</footer>
+
+<script>
+/* Kategoritë (statike — çojnë te faqja kryesore me filtër) */
+const CATS = [
+  {name:'Bimë', emoji:'🌿'}, {name:'Lule', emoji:'🌸'},
+  {name:'Fidanë', emoji:'🌳'}, {name:'Pemë', emoji:'🌲'},
+  {name:'Vazo', emoji:'🪴'}, {name:'Plehra', emoji:'🌱'},
+  {name:'Mbrojtja e bimëve', emoji:'🛡️'}, {name:'Aksesorë', emoji:'🛠️'}
+];
+function catLink(name){ return 'index.html?cat=' + encodeURIComponent(name) + '#produktet'; }
+const megaGrid = document.getElementById('megaGrid');
+if(megaGrid) megaGrid.innerHTML = CATS.map(g =>
+  '<a class="mega-item" role="menuitem" href="' + catLink(g.name) + '">' +
+    '<span class="mega-emoji">' + g.emoji + '</span><span>' + g.name + '</span></a>'
+).join('');
+/* Search overlay */
+const soOverlay = document.getElementById('searchOverlay');
+const soInput = document.getElementById('soInput');
+const nsb = document.getElementById('navSearchBtn');
+if(nsb) nsb.addEventListener('click', ()=>{
+  soOverlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(()=> soInput.focus(), 80);
+});
+function closeSearch(){
+  soOverlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('soClose').addEventListener('click', closeSearch);
+soOverlay.addEventListener('click', e=>{ if(e.target===soOverlay) closeSearch(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && soOverlay.classList.contains('open')) closeSearch(); });
+soInput.addEventListener('keydown', e=>{
+  if(e.key==='Enter'){
+    const q = soInput.value.trim();
+    window.location.href = q ? 'index.html?q=' + encodeURIComponent(q) + '#produktet' : 'index.html#produktet';
+  }
+});
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('stuck', window.scrollY > 40);
+}, { passive: true });
+</script>
+
+<!-- Bottom Navigation (vetëm mobile) -->
+<nav class="bottom-nav" aria-label="Navigimi mobile">
+  <a class="bn-item" href="index.html" aria-label="Kryefaqja"><i class="fa-solid fa-house" aria-hidden="true"></i><span>Kryefaqja</span></a>
+  <a class="bn-item" href="index.html#produktet" aria-label="Produktet"><i class="fa-solid fa-seedling" aria-hidden="true"></i><span>Produktet</span></a>
+  <a class="bn-item" href="index.html" aria-label="Shporta"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i><span>Shporta</span></a>
+  <a class="bn-item" href="rreth-nesh.html" aria-label="Rreth Nesh"><i class="fa-solid fa-leaf" aria-hidden="true"></i><span>Rreth Nesh</span></a>
+  <a class="bn-item" href="index.html#kontakt" aria-label="Kontakt"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span>Kontakt</span></a>
+</nav>
+
+</body>
+</html>
